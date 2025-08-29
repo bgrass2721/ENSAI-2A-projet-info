@@ -105,11 +105,11 @@ At the root of the project :
 ```default
 WEBSERVICE_HOST=https://pokeapi.co/api/v2
 
-POSTGRES_HOST=sgbd-eleves.domensai.ecole
+POSTGRES_HOST=postgresql-949452.user-id2721-ensai
 POSTGRES_PORT=5432
-POSTGRES_DATABASE=idxxxx
-POSTGRES_USER=idxxxx
-POSTGRES_PASSWORD=idxxxx
+POSTGRES_DATABASE=defaultdb
+POSTGRES_USER=user-id2721-ensai
+POSTGRES_PASSWORD=bfaxzhwvymp5kambrv0h
 POSTGRES_SCHEMA=projet
 ```
 
