@@ -1,3 +1,4 @@
+from business_object.chanson import Chanson
 import requests
 
 class ParolesService():
