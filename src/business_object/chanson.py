@@ -1,6 +1,14 @@
+"""
+Module chanson.py
+Contient la classe Chanson utilisée dans le système Mus'IA.
+"""
+
+from .paroles import Paroles  # Import de la classe Paroles définie dans le même package
+
+
 class Chanson:
     """
-    Classe représentant une chanson dans l'application Mus'IA.
+    Classe représentant une chanson dans Mus'IA.
 
     Attributs
     ---------
@@ -10,18 +18,25 @@ class Chanson:
         Titre de la chanson.
     artiste : str
         Nom de l'artiste ou du groupe.
-    annee : int
-        Année de sortie de la chanson.
-    paroles : str
-        Paroles de la chanson.
+    annee : int ou None
+        Année de sortie de la chanson. Par défaut None.
+    paroles : Paroles ou None
+        Objet Paroles associé à la chanson. Par défaut None.
 
     Méthodes
     --------
     afficher() -> str
         Retourne une représentation textuelle de la chanson.
+
+    Exemple
+    -------
+    >>> p = Paroles("Imagine there's no heaven...")
+    >>> c = Chanson(1, "Imagine", "John Lennon", 1971, p)
+    >>> print(c.afficher())
+    Imagine - John Lennon (1971)
     """
 
-    def __init__(self, id: int, titre: str, artiste: str, annee: int, paroles: str = None):
+    def __init__(self, id: int, titre: str, artiste: str, annee: int = None, paroles: Paroles = None):
         self.id = id
         self.titre = titre
         self.artiste = artiste
@@ -30,12 +45,15 @@ class Chanson:
 
     def afficher(self) -> str:
         """
-        Retourne une chaîne lisible représentant la chanson.
+        Retourne une représentation textuelle de la chanson.
 
         Retour
         ------
         str
-            Représentation textuelle au format :
-            "Titre - Artiste (Année)"
+            "Titre - Artiste (Année)" si l’année est connue,
+            sinon "Titre - Artiste".
         """
-        return f"{self.titre} - {self.artiste} ({self.annee})"
+        if self.annee:
+            return f"{self.titre} - {self.artiste} ({self.annee})"
+        return f"{self.titre} - {self.artiste}"
+
