@@ -1,8 +1,3 @@
-"""
-Module paroles.py
-Contient la classe Paroles utilisée dans le système Mus'IA.
-"""
-
 class Paroles:
     """
     Classe représentant les paroles d'une chanson dans le système Mus'IA.

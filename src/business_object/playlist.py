@@ -1,8 +1,3 @@
-"""
-Module playlist.py
-Contient la classe Playlist utilisée dans le système Mus'IA.
-"""
-
 from .chanson import Chanson  # Import de la classe Chanson
 
 

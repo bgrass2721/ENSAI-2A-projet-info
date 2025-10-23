@@ -1,8 +1,3 @@
-"""
-Module chanson.py
-Contient la classe Chanson utilisée dans le système Mus'IA.
-"""
-
 from .paroles import Paroles  # Import de la classe Paroles définie dans le même package
 
 
