@@ -1,0 +1,87 @@
+"""
+get_paroles() : list[Paroles]
+get_playlist() : list[Playlist]
+get_chanson_from_paroles() : Chanson
+add_chanson(Chanson)
+add_playlist(Playlist)
+
+
+def add_attack(self, attack: AbstractAttack) -> bool:
+        created = False
+
+        # Get the id type
+        id_attack_type = TypeAttackDAO().find_id_by_label(attack.type)
+        if id_attack_type is None:
+            return created
+
+        with DBConnection().connection as connection:
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    "INSERT INTO tp.attack (id_attack_type, attack_name,        "
+                    " power, accuracy, element, attack_description)             "
+                    "VALUES                                                     "
+                    "(%(id_attack_type)s, %(name)s, %(power)s, %(accuracy)s,    "
+                    " %(element)s, %(description)s)                             "
+                    "RETURNING id_attack;",
+                    {
+                        "id_attack_type": id_attack_type,
+                        "name": attack.name,
+                        "power": attack.power,
+                        "accuracy": attack.accuracy,
+                        "element": attack.element,
+                        "description": attack.description,
+                    },
+                )
+                res = cursor.fetchone()
+        if res:
+            attack.id = res["id_attack"]
+            created = True
+
+        return created
+
+"""
+
+from business_object.chanson import Chanson
+from dao.db_connection import DBConnection
+
+
+class DAO:
+    def __init__(self):
+        with DBConnection().connection as connection:
+            with connection.cursor() as cursor:
+                cursor.execute("""
+                    CREATE TABLE PLAYLIST (
+                    id_playlist SERIAL PRIMARY KEY,
+                    nom VARCHAR(255) NOT NULL,
+                    emb_nom FLOAT8[], 
+                    date_creation DATE DEFAULT CURRENT_DATE
+                    );
+                    CREATE TABLE IF NOT EXISTS CHANSON (
+                    embed_paroles FLOAT8[] PRIMARY KEY,
+                    titre VARCHAR(255) NOT NULL,
+                    artiste VARCHAR(255) NOT NULL,
+                    annee INT,
+                    );
+                    CREATE TABLE CATALOGUE (
+                    id_playlist INT NOT NULL,
+                    embed_paroles INT NOT NULL,
+                    PRIMARY KEY (id_playlist, embed_paroles),
+                    FOREIGN KEY (id_playlist) REFERENCES PLAYLIST(id_playlist) ON DELETE CASCADE,
+                    FOREIGN KEY (embed_paroles) REFERENCES CHANSON(embed_paroles) ON DELETE CASCADE
+                    );
+                    """)
+
+    def add_chanson(chanson: Chanson):
+        embed_paroles = chanson.paroles.vecteur
+        titre = chanson.titre
+        artiste = chanson.artiste
+        annee = chanson.annee
+        with DBConnection().connection as connection:
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    """
+                    INSERT INTO CHANSON (embed_paroles, titre, artiste, annee)
+                    VALUES (%s, %s, %s, %s)
+                    """,
+                    (embed_paroles, titre, artiste, annee),
+                )
