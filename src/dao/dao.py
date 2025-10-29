@@ -81,7 +81,12 @@ class DAO:
                 cursor.execute(
                     """
                     INSERT INTO CHANSON (embed_paroles, titre, artiste, annee)
-                    VALUES (%s, %s, %s, %s)
+                    VALUES (%(embed_paroles)s, %(titre)s, %(artiste)s, %(annee)s)
                     """,
-                    (embed_paroles, titre, artiste, annee),
+                    {
+                        "embed_paroles": embed_paroles,
+                        "titre": titre,
+                        "artiste": artiste,
+                        "annee": annee,
+                    },
                 )
