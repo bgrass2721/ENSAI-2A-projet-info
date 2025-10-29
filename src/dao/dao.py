@@ -50,7 +50,7 @@ class DAO:
         with DBConnection().connection as connection:
             with connection.cursor() as cursor:
                 cursor.execute("""
-                    CREATE TABLE PLAYLIST (
+                    CREATE TABLE IF NOT EXISTS PLAYLIST (
                     id_playlist SERIAL PRIMARY KEY,
                     nom VARCHAR(255) NOT NULL,
                     emb_nom FLOAT8[], 
@@ -62,7 +62,7 @@ class DAO:
                     artiste VARCHAR(255) NOT NULL,
                     annee INT,
                     );
-                    CREATE TABLE CATALOGUE (
+                    CREATE TABLE IF NOT EXISTS CATALOGUE (
                     id_playlist INT NOT NULL,
                     embed_paroles INT NOT NULL,
                     PRIMARY KEY (id_playlist, embed_paroles),
