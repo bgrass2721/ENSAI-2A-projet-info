@@ -170,7 +170,7 @@ class DAO:
 
     def del_chanson_via_titre_artiste(self, titre: str, artiste: str) -> None:
         """
-        Supprime une chanson de la table CHANSON, soit via l'embedding de ses paroles
+        Supprime une chanson de la table CHANSON, soit via le titre ET l'artiste
         """
         with DBConnection().connection as connection:
             with connection.cursor() as cursor:
@@ -201,7 +201,7 @@ class DAO:
                 )
             connection.commit()
 
-    def del_data_table(self, nom_table: str | None = None) -> None:
+    def del_data_table(self, nom_table: str | None) -> None:
         """
         Vide complètement les tables passées en argument.
         Si aucune table n'est spécifiée, vide toutes les tables sont vidées
