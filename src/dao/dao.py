@@ -109,7 +109,7 @@ class DAO:
                     """,
                     (nom,),
                 )
-                id_playlist = cursor.fetchone()[0]
+                id_playlist = cursor.fetchone()[0]  # (id, )
                 for chanson in chansons:
                     embed_paroles = chanson.paroles.vecteur
                     cursor.execute(
@@ -166,3 +166,20 @@ class DAO:
                     # ajout de la playlist à la liste des playlists
                     playlists.append(playlist)
             return playlists
+
+    def get_chanson_from_paroles(self, paroles: Paroles) -> Chanson | None:
+        with DBConnection().connection as connection:
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    """
+                    SELECT titre, artiste, annee
+                    FROM CHANSON
+                    WHERE embed_paroles = %s;
+                    """,
+                    (paroles.vecteur,),
+                )
+                res = cursor.fetchone()  # (tire, artiste, annee)
+                if res:
+                    titre, artiste, annee = res
+                    return Chanson(titre, artiste, annee, paroles)
+        return None
