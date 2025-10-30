@@ -119,7 +119,7 @@ class DAO:
                         """,
                         (id_playlist, embed_paroles),
                     )
-                    connection.commit()
+                connection.commit()
 
     def get_paroles(self) -> list[Paroles]:
         """
