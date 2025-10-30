@@ -49,6 +49,9 @@ from dao.db_connection import DBConnection
 
 class DAO:
     def __init__(self):
+        """
+        Crée la BD si elle n'est pas créée
+        """
         with DBConnection().connection as connection:
             with connection.cursor() as cursor:
                 cursor.execute("""
@@ -74,6 +77,9 @@ class DAO:
                 connection.commit()
 
     def add_chanson(self, chanson: Chanson):
+        """
+        Ajoute une chanson à la table CHANSON de la BD
+        """
         embed_paroles = chanson.paroles.vecteur
         titre = chanson.titre
         artiste = chanson.artiste
@@ -97,6 +103,9 @@ class DAO:
                 connection.commit()
 
     def add_playlist(self, playlist: Playlist):
+        """
+        Ajoute une playlist à la table PLAYLIST de la BD et remplit la table CATALOGUE de la BD
+        """
         nom = playlist.nom
         chansons = playlist.chansons
         with DBConnection().connection as connection:
@@ -123,7 +132,7 @@ class DAO:
 
     def get_paroles(self) -> list[Paroles]:
         """
-        Récupère l'object Paroles de toutes les chansons enregistrées dans la BD
+        Liste l'objet Paroles de toutes les chansons enregistrées dans la BD
         """
         list_Paroles = []
         with DBConnection().connection as connection:
@@ -137,6 +146,9 @@ class DAO:
         return list_Paroles
 
     def get_playlists(self) -> list[Playlist]:
+        """
+        Liste tous les objets Playlist des playlists enregistrés dans la BD
+        """
         playlists = []
         with DBConnection().connection as connection:
             with connection.cursor() as cursor:
