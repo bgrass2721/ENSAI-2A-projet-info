@@ -35,7 +35,7 @@ class ChansonClient:
         Returns
         ----------
         list[Chanson]
-            une liste de chanson
+            une liste de chansons
         """
         return DAO.get_chansons()
 
