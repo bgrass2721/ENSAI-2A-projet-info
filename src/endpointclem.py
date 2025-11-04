@@ -36,6 +36,7 @@ class ChansonModel(BaseModel):
 class PlaylistModel(BaseModel):
     """Modèle pour la Playlist."""
     # L'id n'est pas un attribut de l'objet Playlist, mais il est retourné par l'insertion dans la BD
+    # Dans la BD il y a id_playlist et nom dans la table PLAYLIST 
     id_playlist: Optional[int] 
     nom: str
     
@@ -44,27 +45,9 @@ class PlaylistModel(BaseModel):
     class Config:
         orm_mode = True
 
-# --- Fonctions utilitaires (Conversion Business Object -> Pydantic Model) ---
 
-def convert_chanson_to_model(chanson) -> ChansonModel:
-    """Convertit un objet Chanson en ChansonModel."""
-    
-    return ChansonModel(
-        # Simplement pour que ça fonctionne sans modification majeure de Chanson
-        id=None, 
-        titre=chanson.titre,
-        artiste=chanson.artiste,
-        annee=chanson.annee
-        content_paroles=chanson.paroles.content if chanson.paroles and hasattr(chanson.paroles, 'content') else None
-    )
 
-def convert_playlist_to_model(id_playlist: int, playlist) -> PlaylistModel:
-    """Convertit un objet Playlist en PlaylistModel avec son ID BD."""
-    return PlaylistModel(
-        id_playlist=id_playlist,
-        nom=playlist.nom
-        chansons=[convert_chanson_to_model(c) for c in playlist.chansons] # Décommenter si nécessaire
-    )
+
 
 # Run the FastAPI application
 if __name__ == "__main__":

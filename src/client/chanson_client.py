@@ -1,6 +1,6 @@
-from src.business_object.chanson import Chanson
 from src.business_object.paroles import Paroles
 from src.dao.dao import DAO
+from src.service.chanson_service import ChansonService
 from src.service.paroles_service import ParolesService
 
 
@@ -10,9 +10,10 @@ class ChansonClient:
     Chaque méthode correspond à un endpoint de l'API
     """
 
-    def instantiate_chanson(self, titre, artiste):
+    def add_new_chanson(self, titre, artiste):
         """
-        Crée un objet chanson à partir d'un titre et d'un artiste
+        Permet à l'utilisateur d'ajouter une nouvelle chanson dans la database.
+        Ajoute automatiquement l'année de sortie et les paroles à partir du service chanson.
 
         Parameters
         ----------
@@ -23,10 +24,16 @@ class ChansonClient:
 
         Returns
         ----------
-        Chanson
-            un objet chanson instancié avec le titre et l'artiste
+        str
+            Message de validation / d'erreur
         """
-        return Chanson(titre, artiste)
+        new_chanson = ChansonService.instantiate_chanson(titre, artiste)
+        try:
+            ChansonService.add_annee(new_chanson)
+            ChansonService.add_chanson_paroles(new_chanson)
+        except:
+            return "La chanson n'est pas trouvable sur l'API"
+        DAO.add_chanson(new_chanson)
 
     def get_chansons(self):
         """

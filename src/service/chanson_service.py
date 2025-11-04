@@ -1,9 +1,9 @@
 import requests
-from service.parole_service import add_from_API
 
 from business_object.chanson import Chanson
 from business_object.paroles import Paroles
 from service.embedding_service import vectorise
+from service.parole_service import add_from_API
 
 
 class chanson_service:
@@ -32,6 +32,7 @@ class chanson_service:
 
         # Paramètres de la requête
         params = {"track_name": chanson.titre, "artist_name": chanson.artiste}
+        params = {"track_name": chanson.titre, "artist_name": chanson.artiste}
 
         try:
             response = requests.get(url, params=params, timeout=10)
@@ -40,9 +41,7 @@ class chanson_service:
 
             # Extraire l'année si disponible
             annee = data.get("year")  # Ici, "year" est une supposition, adapte cela si nécessaire.
-
-            return annee
+            chanson.annee = annee
 
         except requests.exceptions.RequestException as e:
-            print(f"Erreur lors de la requête : {e}")
-            return None
+            raise Exception(f"Erreur lors de la requête : {e}")
