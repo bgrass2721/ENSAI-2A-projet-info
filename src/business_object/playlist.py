@@ -25,7 +25,7 @@ class Playlist:
     -------
     >>> from business_layer.chanson import Chanson
     >>> p = Playlist(1, "Classiques")
-    >>> c = Chanson(1, "Imagine", "John Lennon", 1971)
+    >>> c = Chanson("Imagine", "John Lennon", 1971)
     >>> p.chansons.append(c)
     >>> print(p.afficher())
     Playlist 'Classiques' :

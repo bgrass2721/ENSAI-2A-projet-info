@@ -1,5 +1,5 @@
-from business_layer.playlist import Playlist
-from business_layer.chanson import Chanson
+from business_object.playlist import Playlist
+from business_object.chanson import Chanson
 
 
 class TestPlaylist:
@@ -15,8 +15,8 @@ class TestPlaylist:
 
     def test_afficher_playlist_avec_chansons(self):
         # GIVEN
-        c1 = Chanson(1, "Imagine", "John Lennon", 1971)
-        c2 = Chanson(2, "Hey Jude", "The Beatles", 1968)
+        c1 = Chanson("Imagine", "John Lennon", 1971)
+        c2 = Chanson("Hey Jude", "The Beatles", 1968)
         playlist = Playlist(1, "Classiques", [c1, c2])
 
         # WHEN
@@ -28,7 +28,7 @@ class TestPlaylist:
 
     def test_get_chansons_retourne_liste(self):
         # GIVEN
-        c1 = Chanson(1, "Imagine", "John Lennon", 1971)
+        c1 = Chanson("Imagine", "John Lennon", 1971)
         playlist = Playlist(1, "Classiques", [c1])
 
         # WHEN
@@ -40,8 +40,8 @@ class TestPlaylist:
 
     def test_playlist_peut_etre_modifiee_dynamiquement(self):
         # GIVEN
-        c1 = Chanson(1, "Imagine", "John Lennon", 1971)
-        c2 = Chanson(2, "Yesterday", "The Beatles", 1965)
+        c1 = Chanson("Imagine", "John Lennon", 1971)
+        c2 = Chanson("Yesterday", "The Beatles", 1965)
         playlist = Playlist(1, "Années 60")
 
         # WHEN
