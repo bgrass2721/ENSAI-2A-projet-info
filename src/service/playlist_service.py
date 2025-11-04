@@ -1,7 +1,7 @@
-from src.business_object.chanson import Chanson
-from src.business_object.playlist import Playlist
-from src.dao.dao import DAO
-from src.service.request_embedding_service import RequestEmbeddingService
+from business_object.chanson import Chanson
+from business_object.playlist import Playlist
+from dao.dao import DAO
+from service.request_embedding_service import RequestEmbeddingService
 
 
 class PlaylistService:
@@ -41,9 +41,10 @@ class PlaylistService:
             # On ajoute les nbsongs premières chansons correspondant aux vecteurs de la liste des distances
             for i in range(nbsongs):
                 chansons.append(DAO.get_chanson_from_paroles(compares[i][0]))
-        # Sinon, on retourne une erreur
+        # Sinon, on ajoute toutes les chansons dans l'ordre
         else:
-            raise Exception("Nombre de chanson demandé supérieur au nombre de chansons dans la BDD")
+            for compare in compares:
+                chansons.append(DAO.get_chanson_from_paroles(compare[0]))
         # Retour de l'objet playlist avec les chansons
         return Playlist(keyword, chansons)
 
