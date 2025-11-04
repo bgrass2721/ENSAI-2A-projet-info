@@ -1,3 +1,4 @@
+import requests
 from service.parole_service import add_from_API
 
 from business_object.chanson import Chanson
@@ -32,10 +33,7 @@ class chanson_service:
         url = "https://lrclib.net/api/get"
 
         # Paramètres de la requête
-        params = {
-            "track_name": chanson.titre,
-            "artist_name": chanson.artiste
-        }
+        params = {"track_name": chanson.titre, "artist_name": chanson.artiste}
 
         try:
             response = requests.get(url, params=params, timeout=10)
@@ -50,4 +48,3 @@ class chanson_service:
         except requests.exceptions.RequestException as e:
             print(f"Erreur lors de la requête : {e}")
             return None
-
