@@ -62,18 +62,6 @@ class ChansonClient:
         """
         return DAO.get_chanson_from_id(id)
 
-    def update_chanson(self, Chanson):
-        """
-        Modifie les informations d'une chanson dans la base de données
-        Se sert de l'id et/ou des paroles pour savoir quelle chanson modifier.
-
-        Parameters
-        ----------
-        Chanson
-            la chanson avec les infos modifiées
-        """
-        DAO.update_chanson(Chanson)
-
     def add_chanson_paroles(self, chanson, paroles_content):
         """
         Permet d'ajouter manuellement les paroles d'une chanson
