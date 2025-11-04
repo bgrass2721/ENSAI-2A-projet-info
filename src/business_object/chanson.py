@@ -7,8 +7,7 @@ class Chanson:
 
     Attributs
     ---------
-    id : int
-        Identifiant unique de la chanson.
+
     titre : str
         Titre de la chanson.
     artiste : str
@@ -26,13 +25,12 @@ class Chanson:
     Exemple
     -------
     >>> p = Paroles("Imagine there's no heaven...")
-    >>> c = Chanson(1, "Imagine", "John Lennon", 1971, p)
+    >>> c = Chanson("Imagine", "John Lennon", 1971, p)
     >>> print(c.afficher())
     Imagine - John Lennon (1971)
     """
 
-    def __init__(self, id: int, titre: str, artiste: str, annee: int = None, paroles: Paroles = None):
-        self.id = id
+    def __init__(self, titre: str, artiste: str, annee: int = None, paroles: Paroles = None):
         self.titre = titre
         self.artiste = artiste
         self.annee = annee
