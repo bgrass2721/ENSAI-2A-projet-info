@@ -4,7 +4,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.responses import RedirectResponse
 from pydantic import BaseModel
 
-from service.joueur_service import JoueurService
+from dao.dao import DAO
 from utils.log_init import initialiser_logs
 
 app = FastAPI(title="Mon webservice")
@@ -12,7 +12,43 @@ app = FastAPI(title="Mon webservice")
 
 initialiser_logs("Webservice")
 
-joueur_service = JoueurService()
+dao = DAO()
+
+
+class ParolesModel(BaseModel):
+    """Modèle pour les paroles/embeddings, si nécessaire pour l'API."""
+    # Le vecteur est le champ clé dans la BD, nous l'utilisons pour l'identifier
+    vecteur: List[float] # Le vecteur d'embedding
+
+class ChansonModel(BaseModel):
+    """Modèle pour la Chanson, pour les réponses de l'API."""
+    id: Optional[int] # L'id dans la classe Chanson est présent dans le diagramme 
+    titre: str
+    artiste: str
+    annee: Optional[int]
+    # L'objet Paroles est complexe, mais nous allons exposer un minimum d'info, 
+    # l'API Client interagit avec les méthodes du DAO pour la création
+    # Si nous voulions exposer les paroles complètes, on utiliserait le content:
+    # content_paroles: Optional[str]
+
+    # Ajout d'une configuration pour gérer les objets non-dict (Chanson)
+    class Config:
+        orm_mode = True # ou from_attributes = True pour Python >= 3.11
+
+
+class PlaylistModel(BaseModel):
+    """Modèle pour la Playlist."""
+    # L'id n'est pas un attribut de l'objet Playlist, mais il est retourné par l'insertion dans la BD
+    # Dans la BD il y a id_playlist et nom dans la table PLAYLIST 
+    id_playlist: Optional[int] 
+    nom: str
+    
+    # La liste des chansons est un attribut de la Playlist 
+    # Nous pourrions vouloir l'inclure dans la réponse
+    # chansons: Optional[List[ChansonModel]] # Décommenter si vous voulez les chansons dans la réponse get
+
+    class Config:
+        orm_mode = True
 
 
 @app.get("/", include_in_schema=False)
@@ -39,72 +75,7 @@ async def joueur_par_id(id_joueur: int):
     """Trouver un joueur à partir de son id"""
     logging.info("Trouver un joueur à partir de son id")
     return joueur_service.trouver_par_id(id_joueur)
-
-
-class JoueurModel(BaseModel):
-    """Définir un modèle Pydantic pour les Joueurs"""
-
-    id_joueur: int | None = None  # Champ optionnel
-    pseudo: str
-    mdp: str
-    age: int
-    mail: str
-    fan_pokemon: bool
-
-
-@app.post("/joueur/", tags=["Joueurs"])
-async def creer_joueur(j: JoueurModel):
-    """Créer un joueur"""
-    logging.info("Créer un joueur")
-    if joueur_service.pseudo_deja_utilise(j.pseudo):
-        raise HTTPException(status_code=404, detail="Pseudo déjà utilisé")
-
-    joueur = joueur_service.creer(j.pseudo, j.mdp, j.age, j.mail, j.fan_pokemon)
-    if not joueur:
-        raise HTTPException(status_code=404, detail="Erreur lors de la création du joueur")
-
-    return joueur
-
-
-@app.put("/joueur/{id_joueur}", tags=["Joueurs"])
-def modifier_joueur(id_joueur: int, j: JoueurModel):
-    """Modifier un joueur"""
-    logging.info("Modifier un joueur")
-    joueur = joueur_service.trouver_par_id(id_joueur)
-    if not joueur:
-        raise HTTPException(status_code=404, detail="Joueur non trouvé")
-
-    joueur.pseudo = j.pseudo
-    joueur.mdp = j.mdp
-    joueur.age = j.age
-    joueur.mail = j.mail
-    joueur.fan_pokemon = j.fan_pokemon
-    joueur = joueur_service.modifier(joueur)
-    if not joueur:
-        raise HTTPException(status_code=404, detail="Erreur lors de la modification du joueur")
-
-    return f"Joueur {j.pseudo} modifié"
-
-
-@app.delete("/joueur/{id_joueur}", tags=["Joueurs"])
-def supprimer_joueur(id_joueur: int):
-    """Supprimer un joueur"""
-    logging.info("Supprimer un joueur")
-    joueur = joueur_service.trouver_par_id(id_joueur)
-    if not joueur:
-        raise HTTPException(status_code=404, detail="Joueur non trouvé")
-
-    joueur_service.supprimer(joueur)
-    return f"Joueur {joueur.pseudo} supprimé"
-
-
-@app.get("/hello/{name}")
-async def hello_name(name: str):
-    """Afficher Hello"""
-    logging.info("Afficher Hello")
-    return f"message : Hello {name}"
-
-
+    
 # Run the FastAPI application
 if __name__ == "__main__":
     import uvicorn
