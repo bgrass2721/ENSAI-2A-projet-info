@@ -41,37 +41,9 @@ class PlaylistModel(BaseModel):
     nom: str
     
     # La liste des chansons est un attribut de la Playlist 
-    # Nous pourrions vouloir l'inclure dans la réponse
-    # chansons: Optional[List[ChansonModel]] # Décommenter si vous voulez les chansons dans la réponse get
 
     class Config:
         orm_mode = True
-
-
-@app.get("/", include_in_schema=False)
-async def redirect_to_docs():
-    """Redirect to the API documentation"""
-    return RedirectResponse(url="/docs")
-
-
-@app.get("/joueur/", tags=["Joueurs"])
-async def lister_tous_joueurs():
-    """Lister tous les joueurs"""
-    logging.info("Lister tous les joueurs")
-    liste_joueurs = joueur_service.lister_tous()
-
-    liste_model = []
-    for joueur in liste_joueurs:
-        liste_model.append(joueur)
-
-    return liste_model
-
-
-@app.get("/joueur/{id_joueur}", tags=["Joueurs"])
-async def joueur_par_id(id_joueur: int):
-    """Trouver un joueur à partir de son id"""
-    logging.info("Trouver un joueur à partir de son id")
-    return joueur_service.trouver_par_id(id_joueur)
 
 # Run the FastAPI application
 if __name__ == "__main__":
