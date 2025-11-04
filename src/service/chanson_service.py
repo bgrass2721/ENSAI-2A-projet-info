@@ -22,8 +22,6 @@ class chanson_service:
         paroles_vecteur = vectorise(paroles_str)
         chanson.paroles = Paroles(content=paroles_str, vecteur=paroles_vecteur)
 
-    import requests
-
     def add_annee(chanson: Chanson):
         """
         Recherche l'année de sortie d'une chanson via LRCLIB à partir du titre et de l'artiste.
