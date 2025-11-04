@@ -28,9 +28,6 @@ class ChansonModel(BaseModel):
     annee: Optional[int]
     # L'objet Paroles est complexe, mais nous allons exposer un minimum d'info, 
     # l'API Client interagit avec les méthodes du DAO pour la création
-    # Si nous voulions exposer les paroles complètes, on utiliserait le content:
-    # content_paroles: Optional[str]
-
     # Ajout d'une configuration pour gérer les objets non-dict (Chanson)
     class Config:
         orm_mode = True # ou from_attributes = True pour Python >= 3.11
@@ -75,7 +72,7 @@ async def joueur_par_id(id_joueur: int):
     """Trouver un joueur à partir de son id"""
     logging.info("Trouver un joueur à partir de son id")
     return joueur_service.trouver_par_id(id_joueur)
-    
+
 # Run the FastAPI application
 if __name__ == "__main__":
     import uvicorn
