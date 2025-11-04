@@ -1,4 +1,4 @@
-from embedding_service import EmbeddingService
+from .embedding_service import EmbeddingService
 import numpy as np
 
 

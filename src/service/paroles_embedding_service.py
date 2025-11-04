@@ -1,5 +1,5 @@
 
-from embedding_service import EmbeddingService
+from .embedding_service import EmbeddingService
 
 
 class ParolesEmbeddingService(EmbeddingService):
