@@ -1,4 +1,4 @@
-from business_layer.paroles import Paroles
+from business_object.paroles import Paroles
 
 
 class TestParoles:
