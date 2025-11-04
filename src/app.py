@@ -54,7 +54,7 @@ def convert_chanson_to_model(chanson) -> ChansonModel:
         id=None, 
         titre=chanson.titre,
         artiste=chanson.artiste,
-        annee=chanson.annee
+        annee=chanson.annee,
         content_paroles=chanson.paroles.content if chanson.paroles and hasattr(chanson.paroles, 'content') else None
     )
 
@@ -62,7 +62,7 @@ def convert_playlist_to_model(id_playlist: int, playlist) -> PlaylistModel:
     """Convertit un objet Playlist en PlaylistModel avec son ID BD."""
     return PlaylistModel(
         id_playlist=id_playlist,
-        nom=playlist.nom
+        nom=playlist.nom,
         chansons=[convert_chanson_to_model(c) for c in playlist.chansons] # Décommenter si nécessaire
     )
 

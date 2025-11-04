@@ -1,6 +1,6 @@
 import pytest
-# from business_object.playlist import Playlist  # Décommenter si les vrais BO sont disponibles
-# from business_object.chanson import Chanson  # Décommenter si les vrais BO sont disponibles
+from business_object.playlist import Playlist  # Décommenter si les vrais BO sont disponibles
+from business_object.chanson import Chanson  # Décommenter si les vrais BO sont disponibles
 from service.playlist_service import PlaylistService # Assurez-vous que ce chemin est correct
 
 # --- Définitions simplifiées des Business Objects pour les tests ---
