@@ -32,6 +32,7 @@ class chanson_service:
 
         # Paramètres de la requête
         params = {"track_name": chanson.titre, "artist_name": chanson.artiste}
+        params = {"track_name": chanson.titre, "artist_name": chanson.artiste}
 
         try:
             response = requests.get(url, params=params, timeout=10)
