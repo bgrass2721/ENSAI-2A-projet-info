@@ -23,7 +23,7 @@ if __name__ == "__main__":
             current_view.display_info()
 
             # Affichage des choix possibles
-            current_view = current_view.choisir_menu()
+            current_view = current_view.make_choice()
         except Exception as e:
             logging.info(e)
             nb_erreurs += 1
