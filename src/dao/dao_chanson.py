@@ -9,11 +9,6 @@ class DAO_chanson(DAO):
         """
         Ajoute une chanson à la table CHANSON de la BD
         """
-        embed_paroles = chanson.paroles.vecteur
-        titre = chanson.titre
-        artiste = chanson.artiste
-        annee = chanson.annee
-        str_paroles = chanson.paroles.content
         with DBConnection().connection as connection:
             with connection.cursor() as cursor:
                 cursor.execute(
@@ -22,13 +17,13 @@ class DAO_chanson(DAO):
                     VALUES (%(embed_paroles)s, %(titre)s, %(artiste)s, %(annee)s, %(str_paroles)s)
                     ON CONFLICT DO NOTHING;
                     """,
-                    # ON CONFLICT évite d'enregistrer deux fois une chanson
+                    # ON CONFLICT DO NOTHING les attributs PRIMARY KEY ou UNIQUE
                     {
-                        "embed_paroles": embed_paroles,
-                        "titre": titre,
-                        "artiste": artiste,
-                        "annee": annee,
-                        "str_paroles": str_paroles,
+                        "embed_paroles": chanson.paroles.vecteur,
+                        "titre": chanson.titre,
+                        "artiste": chanson.artiste,
+                        "annee": chanson.annee,
+                        "str_paroles": chanson.paroles.content,
                     },
                 )
                 connection.commit()
@@ -42,13 +37,14 @@ class DAO_chanson(DAO):
             with connection.cursor() as cursor:
                 cursor.execute(
                     "SELECT embed_paroles, titre, artiste, annee, str_paroles FROM CHANSON;"
-                )
-                res = cursor.fetchall()  # liste de tuple
-                for tup in res:
-                    vecteur, titre, artiste, annee, content = tup
-                    paroles = Paroles(content=content, vecteur=vecteur)
-                    chanson = Chanson(titre, artiste, annee, paroles)
-                    list_Chansons.append(chanson)
+                )  # [(embed_paroles, titre, artiste, annee, str_paroles), (...), ...]
+                res = cursor.fetchall()
+                if res:  # None comme False donc si None la condition n'est pas remplie
+                    for tup in res:
+                        vecteur, titre, artiste, annee, content = tup
+                        paroles = Paroles(content=content, vecteur=vecteur)
+                        chanson = Chanson(titre, artiste, annee, paroles)
+                        list_Chansons.append(chanson)
         return list_Chansons
 
     def get_chanson_from_embed_paroles(self, embed_paroles: list[float]) -> Chanson | None:
@@ -64,7 +60,7 @@ class DAO_chanson(DAO):
                     (embed_paroles,),
                 )
                 res = cursor.fetchone()  # (tire, artiste, annee)
-                if res:  # None comme False donc si None la condition n'est pas remplie
+                if res:
                     titre, artiste, annee, str_paroles = res
                     paroles = Paroles(content=str_paroles, vecteur=embed_paroles)
                     return Chanson(titre, artiste, annee, paroles)
