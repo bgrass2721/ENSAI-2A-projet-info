@@ -4,32 +4,22 @@ from fastapi import FastAPI, HTTPException, Path
 from fastapi.responses import RedirectResponse
 from pydantic import BaseModel
 
-# -------------------------------------------------------------------
-#  Import de la couche Client (selon le diagramme)
-# (Assurez-vous que ces chemins d'import sont corrects)
-# -------------------------------------------------------------------
 from client.playlist_client import PlaylistClient
 from client.chanson_client import ChansonClient
-# -------------------------------------------------------------------
+
 
 from utils.log_init import initialiser_logs
 
-# -------------------------------------------------------------------
+
 #  Création et configuration de l’application FastAPI
-# -------------------------------------------------------------------
+
 app = FastAPI(title="API Mus’IA - Gestion des Playlists")
 initialiser_logs("Webservice Mus’IA")
 
-# -------------------------------------------------------------------
-#  Instanciation des Clients (au lieu des DAOs)
-# -------------------------------------------------------------------
 playlist_client = PlaylistClient()
 chanson_client = ChansonClient()
 
-
-# -------------------------------------------------------------------
-#  Définition des modèles Pydantic
-# -------------------------------------------------------------------
+# Modèles Pydantic
 
 class ParolesModel(BaseModel):
     """Modèle de représentation des paroles et du vecteur d'embedding."""
@@ -65,7 +55,6 @@ class PlaylistCreationModel(BaseModel):
     nbsongs: int
 
 
-# --- MODIFIÉ ---
 class NewChansonInput(BaseModel):
     """
     Modèle Pydantic pour les données reçues lors d'une requête POST.
@@ -73,7 +62,7 @@ class NewChansonInput(BaseModel):
     """
     titre: str
     artiste: str
-    annee: Optional[int] = None # L'année est facultative (default None dans Chanson)
+    annee: Optional[int] = None
 
 
 class ParolesContentModel(BaseModel):
@@ -82,26 +71,20 @@ class ParolesContentModel(BaseModel):
     artiste: str
     paroles: str
 
+#   Redirection automatique vers la documentation interactive
 
-# -------------------------------------------------------------------
-#  Redirection automatique vers la documentation interactive
-# -------------------------------------------------------------------
 @app.get("/", include_in_schema=False)
 async def redirect_to_docs():
     """Redirige l’utilisateur vers la page de documentation (Swagger UI)."""
     return RedirectResponse(url="/docs")
 
 
-# ===================================================================
-#  SECTION : ENDPOINTS POUR LES PLAYLISTS
-# ===================================================================
-# ... (Les endpoints de playlist restent les mêmes que dans ma réponse précédente) ...
+#   ENDPOINTS POUR LES PLAYLISTS
 
 @app.post("/playlists", response_model=PlaylistModel, tags=["Playlists"])
 async def create_playlist(data: PlaylistCreationModel):
     """
     Crée une playlist en appelant le client.
-    Le client gère la logique de recherche de chansons et de création.
     """
     try:
         nouvelle_playlist = playlist_client.request_playlist(
@@ -163,9 +146,7 @@ async def get_songs_from_playlist(id_playlist: int):
         raise HTTPException(status_code=500, detail="Erreur interne.")
 
 
-# ===================================================================
-#  SECTION : ENDPOINTS POUR LES CHANSONS
-# ===================================================================
+#  ENDPOINTS POUR LES CHANSONS
 
 @app.get("/chansons/", response_model=List[ChansonModel], summary="Retourne la liste complète des chansons disponibles.")
 async def get_all_chansons():
@@ -180,18 +161,12 @@ async def get_all_chansons():
         raise HTTPException(status_code=500, detail="Erreur interne.")
 
 
-# --- MODIFIÉ ---
 @app.post("/chansons/", response_model=ChansonModel, status_code=201, summary="Ajoute une chanson (récupération auto des paroles).")
 async def add_chanson_from_api(chanson_data: NewChansonInput):
     """
-    Orchestre la création complète d'une chanson via le Client.
-    L'API ne fait que transmettre la demande au ChansonClient.
-    
-    La logique métier (instancier, add_annee, add_chanson_paroles)
-    est gérée par le ChansonService, qui est appelé par le ChansonClient.
+    Création complète d'une chanson via le Client.
     """
     try:
-        # On appelle la couche Client, qui elle-même appellera la couche Service
         chanson_complete = chanson_client.add_new_chanson(
             titre=chanson_data.titre,
             artiste=chanson_data.artiste,
