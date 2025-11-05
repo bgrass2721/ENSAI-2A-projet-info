@@ -72,7 +72,7 @@ class DAO_playlist(DAO):
                     playlist = Playlist(nom, chansons)
                     # Ajout de la playlist à la liste des playlists
                     playlists.append(playlist)
-            return playlists
+        return playlists
 
     def get_playlist_from_id(self, id_playlist: int) -> Playlist | None:
         """
@@ -80,35 +80,26 @@ class DAO_playlist(DAO):
         """
         with DBConnection().connection as connection:
             with connection.cursor() as cursor:
-                # Récupération nom de chaque playlist
+                # Récupération des chansons et du nom de la playlist
                 cursor.execute(
                     """
-                    SELECT DISTINCT nom from PLAYLIST
-                    WHERE id_playlist = %s;
+                    SELECT cat.nom, c.embed_paroles, c.titre, c.artiste, c.annee, c.str_paroles
+                    FROM CHANSON c
+                    JOIN CATALOGUE cat ON c.embed_paroles = cat.embed_paroles
+                    WHERE cat.id_playlist = %s;
                     """,
                     (id_playlist,),
-                )  # [(nom)]
-                nom = cursor.fetchone()[0]
-                if nom:
-                    # Récupération des chansons de la playlist
-                    cursor.execute(
-                        """
-                        SELECT c.embed_paroles, c.titre, c.artiste, c.annee, c.str_paroles
-                        FROM CHANSON c
-                        JOIN CATALOGUE cat ON c.embed_paroles = cat.embed_paroles
-                        WHERE cat.id_playlist = %s;
-                        """,
-                        (id_playlist,),
-                    )  # [(embed_paroles, titre, artiste, annee, str_paroles), (...), ...]
-                    res = cursor.fetchall()
-                    chansons = []
-                    for embed_paroles, titre, artiste, annee, str_paroles in res:
-                        paroles = Paroles(content=str_paroles, vecteur=embed_paroles)
-                        # Création objet Chanson
-                        chanson = Chanson(titre, artiste, annee, paroles)
-                        # Ajout de la chanson à liste de chansons
-                        chansons.append(chanson)
-                        # Création objet Playlist
-                        playlist = Playlist(nom, chansons)
-                        return playlist
-                return None
+                )  # [(nom, embed_paroles, titre, artiste, annee, str_paroles), (...), ...]
+                res = cursor.fetchall()
+                chansons = []
+                for _, embed_paroles, titre, artiste, annee, str_paroles in res:
+                    paroles = Paroles(content=str_paroles, vecteur=embed_paroles)
+                    # Création objet Chanson
+                    chanson = Chanson(titre, artiste, annee, paroles)
+                    # Ajout de la chanson à liste de chansons
+                    chansons.append(chanson)
+                    # Création objet Playlist
+                nom = res[0][0]
+                playlist = Playlist(nom, chansons)
+                return playlist
+        return None
