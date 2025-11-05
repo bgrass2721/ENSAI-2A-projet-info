@@ -18,21 +18,23 @@ class DAO_playlist(DAO):
                     """
                     INSERT INTO PLAYLIST (nom)
                     VALUES (%s)
-                    RETURNING id_playlist
-                    ON CONFLICT DO NOTHING;
+                    ON CONFLICT DO NOTHING
+                    RETURNING id_playlist;
                     """,
                     (nom,),
-                )
-                id_playlist = cursor.fetchone()[0]  # (id, )
-                for chanson in chansons:
-                    embed_paroles = chanson.paroles.vecteur
-                    cursor.execute(
-                        """
-                        INSERT INTO CATALOGUE (id_playlist, embed_paroles)
-                        VALUES (%s, %s);
-                        """,
-                        (id_playlist, embed_paroles),
-                    )
+                )  # (id, ) # si une playlist porte le même nom : retourne None
+                id_playlist = cursor.fetchone()
+                if id_playlist:
+                    id_playlist = id_playlist[0]
+                    for chanson in chansons:
+                        embed_paroles = chanson.paroles.vecteur
+                        cursor.execute(
+                            """
+                            INSERT INTO CATALOGUE (id_playlist, embed_paroles)
+                            VALUES (%s, %s);
+                            """,
+                            (id_playlist, embed_paroles),
+                        )
                 connection.commit()
 
     def get_playlists(self) -> list[Playlist]:
@@ -83,9 +85,10 @@ class DAO_playlist(DAO):
                 # Récupération des chansons et du nom de la playlist
                 cursor.execute(
                     """
-                    SELECT cat.nom, c.embed_paroles, c.titre, c.artiste, c.annee, c.str_paroles
-                    FROM CHANSON c
-                    JOIN CATALOGUE cat ON c.embed_paroles = cat.embed_paroles
+                    SELECT p.nom, c.embed_paroles, c.titre, c.artiste, c.annee, c.str_paroles
+                    FROM PLAYLIST p
+                    JOIN CATALOGUE cat ON p.id_playlist = cat.id_playlist
+                    JOIN CHANSON c ON c.embed_paroles = cat.embed_paroles
                     WHERE cat.id_playlist = %s;
                     """,
                     (id_playlist,),
