@@ -77,6 +77,7 @@ class DAO_playlist(DAO):
                 # (...), ...]
                 res = cursor.fetchall()
                 if res:
+                    # groupby et itemgetter sont natifs de Python
                     # GROUP BY id_playlist
                     # 0 car id_playlist est le premier élément de chaque tuple
                     for id_playlist, group in groupby(res, key=itemgetter(0)):
