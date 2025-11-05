@@ -72,6 +72,28 @@ class DAO_chanson(DAO):
                     chanson = Chanson(titre, artiste, annee, paroles)
                     return chanson
 
+    def get_chanson_from_titre_artiste(self, titre: str, artiste: str) -> Chanson | None:
+        """
+        Récupère un object Chanson via l'embedding de paroles
+        """
+        with DBConnection().connection as connection:
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    """
+                    SELECT titre, artiste, annee, embed_parole, str_paroles
+                    FROM CHANSON
+                    WHERE titre = %s
+                    AND artiste = %s;
+                    """,
+                    (titre, artiste),
+                )  # (tire, artiste, annee, embed_paroles, str_paroles)
+                res = cursor.fetchone()
+                if res:
+                    titre, artiste, annee, embed_paroles, str_paroles = res
+                    paroles = Paroles(content=str_paroles, vecteur=embed_paroles)
+                    chanson = Chanson(titre, artiste, annee, paroles)
+                    return chanson
+
     def _del_chanson_via_embed_paroles(self, embed_paroles: list[float]) -> bool:
         """
         Supprime une chanson de la table CHANSON via l'embedding pour l'identifier
