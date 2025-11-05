@@ -3,7 +3,7 @@ from InquirerPy import prompt
 from view.abstract_view import AbstractView
 
 
-class StartView(AbstractView):
+class CreatePlaylistView(AbstractView):
     def __init__(self):
         self.__questions = [
             {
@@ -28,7 +28,7 @@ class StartView(AbstractView):
 
     def make_choice(self):
         reponses = prompt(self.__questions)
-        response = requests.get("http://127.0.0.1:8000/playlists", params=responses)
+        response = requests.post("http://127.0.0.1:8000/playlists", json=responses)
         if response.status_code == 500:
             print("Je sais pas pourquoi ca voudrait pas (faudra qu'on regarde)")
         else:

@@ -35,9 +35,9 @@ class StartView(AbstractView):
             return ConnectionView()
 
         elif reponse["choix"] == "Créer une playlist":
-            from view.battle_view import BattleView
+            from view.create_playlist_view import Create_PlaylistView
 
-            return BattleView()
+            return CreatePlaylistView()
 
         elif reponse["choix"] == "Catalogue de musiques":
             from view.pokemon_list_view import PokemonListView
@@ -45,6 +45,6 @@ class StartView(AbstractView):
             return PokemonListView()
 
         elif reponse["choix"] == "Catalogue de playlists":
-            from view.attack_list_view import AttackListView
+            from view.playlist_catalog_view import PlaylistCatalogView
 
-            return AttackListView()
+            return PlaylistCatalogView()
