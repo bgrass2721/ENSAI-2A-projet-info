@@ -88,7 +88,7 @@ class DAO_playlist(DAO):
                     """,
                     (id_playlist,),
                 )  # [(nom)]
-                nom = cursor.fetchone()
+                nom = cursor.fetchone()[0]
                 if nom:
                     # Récupération des chansons de la playlist
                     cursor.execute(
