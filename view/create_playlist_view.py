@@ -7,19 +7,20 @@ class StartView(AbstractView):
     def __init__(self):
         self.__questions = [
             {
-                "type": "list",
-                "name": "choix",
-                "message": f"Bonjour, que voulez vous faire ?",
-                "choices": [
-                    "Ajouter une musique",
-                    "Créer une playlist",
-                    "Catalogue de musiques",
-                    "Catalogue de playlists",
-                    "Quitter",
-                ],
-            }
+            "type": "input",  # Demande une saisie texte
+            "message": "Thème de la playlist : ",
+            "name": "name",  # Nom de la réponse
+            "validate": lambda result: len(result) > 0,  # Validation pour ne pas laisser vide
+            "invalid_message": "Le nom du titre ne peut pas être vide.",
+        },
+        {
+            "type": "input",  # Demande une saisie texte
+            "message": " Nombre de musique max : ",
+            "name": "name",  # Nom de la réponse
+            "validate": lambda result: len(result) > 0,  # Validation pour ne pas laisser vide
+            "invalid_message": "Le nom de l'artiste ne peut pas être vide.",
+        }
         ]
-
     def display_info(self):
         with open("src/graphical_assets/banner.txt", "r", encoding="utf-8") as asset:
             print(asset.read())

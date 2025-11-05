@@ -1,75 +1,254 @@
 import logging
-
-from fastapi import FastAPI, HTTPException
+from typing import List, Optional
+from fastapi import FastAPI, HTTPException, Path
 from fastapi.responses import RedirectResponse
 from pydantic import BaseModel
 
-from dao.dao import DAO
+from client.playlist_client import PlaylistClient
+from client.chanson_client import ChansonClient
+
+
 from utils.log_init import initialiser_logs
 
-app = FastAPI(title="Mon webservice")
 
+#  Création et configuration de l’application FastAPI
 
-initialiser_logs("Webservice")
+app = FastAPI(title="API Mus’IA - Gestion des Playlists")
+initialiser_logs("Webservice Mus’IA")
 
-dao = DAO()
+playlist_client = PlaylistClient()
+chanson_client = ChansonClient()
 
+# Modèles Pydantic
 
 class ParolesModel(BaseModel):
-    """Modèle pour les paroles/embeddings, si nécessaire pour l'API."""
-    # Le vecteur est le champ clé dans la BD, nous l'utilisons pour l'identifier
-    vecteur: List[float] # Le vecteur d'embedding
+    """Modèle de représentation des paroles et du vecteur d'embedding."""
+    vecteur: List[float]
+    content: Optional[str] = None
+
 
 class ChansonModel(BaseModel):
-    """Modèle pour la Chanson, pour les réponses de l'API."""
-    id: Optional[int] # L'id dans la classe Chanson est présent dans le diagramme 
+    """Modèle de représentation d’une chanson."""
     titre: str
     artiste: str
     annee: Optional[int]
-    # L'objet Paroles est complexe, mais nous allons exposer un minimum d'info, 
-    # l'API Client interagit avec les méthodes du DAO pour la création
-    # Ajout d'une configuration pour gérer les objets non-dict (Chanson)
-    class Config:
-        orm_mode = True # ou from_attributes = True pour Python >= 3.11
-
-
-class PlaylistModel(BaseModel):
-    """Modèle pour la Playlist."""
-    # L'id n'est pas un attribut de l'objet Playlist, mais il est retourné par l'insertion dans la BD
-    id_playlist: Optional[int] 
-    nom: str
-    
-    # La liste des chansons est un attribut de la Playlist 
+    paroles: Optional[ParolesModel]
 
     class Config:
         orm_mode = True
 
-# --- Fonctions utilitaires (Conversion Business Object -> Pydantic Model) ---
 
-def convert_chanson_to_model(chanson) -> ChansonModel:
-    """Convertit un objet Chanson en ChansonModel."""
-    
-    return ChansonModel(
-        # Simplement pour que ça fonctionne sans modification majeure de Chanson
-        id=None, 
-        titre=chanson.titre,
-        artiste=chanson.artiste,
-        annee=chanson.annee,
-        content_paroles=chanson.paroles.content if chanson.paroles and hasattr(chanson.paroles, 'content') else None
-    )
+class PlaylistModel(BaseModel):
+    """Modèle de représentation d’une playlist."""
+    id_playlist: Optional[int]
+    nom: str
+    chansons: Optional[List[ChansonModel]]
 
-def convert_playlist_to_model(id_playlist: int, playlist) -> PlaylistModel:
-    """Convertit un objet Playlist en PlaylistModel avec son ID BD."""
-    return PlaylistModel(
-        id_playlist=id_playlist,
-        nom=playlist.nom,
-        chansons=[convert_chanson_to_model(c) for c in playlist.chansons] # Décommenter si nécessaire
-    )
+    class Config:
+        orm_mode = True
 
-# Run the FastAPI application
+
+class PlaylistCreationModel(BaseModel):
+    """Modèle d'entrée pour la création d'une playlist."""
+    nom: str          # Mot-clé qui servira aussi de nom de playlist
+    nbsongs: int      # Nombre de chansons souhaitées
+
+
+class NewChansonInput(BaseModel):
+    """
+    Modèle Pydantic pour les données reçues lors d'une requête POST.
+    Les paroles ne sont pas incluses car elles sont récupérées automatiquement.
+    """
+    titre: str
+    artiste: str
+    annee: Optional[int] = None
+
+
+class ParolesContentModel(BaseModel):
+    """Modèle pour le retour des paroles simples."""
+    titre: str
+    artiste: str
+    paroles: str
+
+#   Redirection automatique vers la documentation interactive
+
+@app.get("/", include_in_schema=False)
+async def redirect_to_docs():
+    """Redirige l’utilisateur vers la page de documentation (Swagger UI)."""
+    return RedirectResponse(url="/docs")
+
+
+#   ENDPOINTS POUR LES PLAYLISTS
+
+@app.post("/playlists", response_model=PlaylistModel, tags=["Playlists"])
+async def create_playlist(data: PlaylistCreationModel):
+    """
+    Crée une playlist à partir d'un mot-clé et d'un nombre de chansons.
+    Le nom de la playlist est généré automatiquement.
+    """
+    try:
+        # Validation des entrées
+        if data.nbsongs <= 0 or data.nbsongs > 50:  # Limite raisonnable
+            raise HTTPException(
+                status_code=400, 
+                detail="Le nombre de chansons doit être entre 1 et 50"
+            )
+        
+        if len(data.keyword.strip()) < 2:
+            raise HTTPException(
+                status_code=400,
+                detail="Le mot-clé doit contenir au moins 2 caractères"
+            )
+        
+        # Appel du client avec seulement 2 paramètres
+        nouvelle_playlist = playlist_client.request_playlist(
+            keyword=data.keyword,
+            nbsongs=data.nbsongs
+        )
+        
+        if not nouvelle_playlist:
+            raise HTTPException(
+                status_code=500,
+                detail="La création de la playlist a échoué"
+            )
+            
+        return nouvelle_playlist
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Erreur lors de la création de la playlist : {e}")
+        raise HTTPException(status_code=500, detail=f"Erreur interne: {e}")
+
+
+@app.get("/playlists", response_model=List[PlaylistModel], tags=["Playlists"])
+async def get_all_playlists():
+    """
+    Récupère la liste de toutes les playlists via le client.
+    """
+    try:
+        playlists = playlist_client.get_playlists() 
+        return playlists
+    except Exception as e:
+        logging.error(f"Erreur lors de la récupération des playlists via client : {e}")
+        raise HTTPException(status_code=500, detail="Erreur interne.")
+
+
+@app.get("/playlists/{id_playlist}", response_model=PlaylistModel, tags=["Playlists"])
+async def get_playlist_by_id(id_playlist: int):
+    """
+    Récupère une playlist spécifique par son ID via le client.
+    """
+    try:
+        playlist = playlist_client.get_playlist(id_playlist) 
+        if not playlist:
+            raise HTTPException(status_code=404, detail="Playlist introuvable.")
+        return playlist
+    except HTTPException as he:
+        raise he 
+    except Exception as e:
+        logging.error(f"Erreur récupération playlist {id_playlist} via client : {e}")
+        raise HTTPException(status_code=500, detail="Erreur interne.")
+
+
+@app.get("/playlists/{id_playlist}/songs", response_model=List[ChansonModel], tags=["Playlists"])
+async def get_songs_from_playlist(id_playlist: int):
+    """
+    Retourne toutes les chansons d'une playlist via le client.
+    """
+    try:
+        chansons = playlist_client.get_playlist_chansons(id_playlist) 
+        
+        if chansons is None:
+            raise HTTPException(status_code=404, detail="Playlist introuvable.")
+        return chansons
+    except HTTPException as he:
+        raise he 
+    except Exception as e:
+        logging.error(f"Erreur récupération chansons de playlist {id_playlist} via client : {e}")
+        raise HTTPException(status_code=500, detail="Erreur interne.")
+
+
+#  ENDPOINTS POUR LES CHANSONS
+
+@app.get("/chansons/", response_model=List[ChansonModel], summary="Retourne la liste complète des chansons disponibles.")
+async def get_all_chansons():
+    """
+    Récupère toutes les chansons via le client.
+    """
+    try:
+        liste_chansons = chanson_client.get_chansons() 
+        return liste_chansons
+    except Exception as e:
+        logging.error(f"Erreur lors de la récupération des chansons via client: {e}")
+        raise HTTPException(status_code=500, detail="Erreur interne.")
+
+
+@app.post("/chansons/", response_model=ChansonModel, summary="Ajoute une chanson (récupération auto des paroles).")
+async def add_chanson_from_api(chanson_data: NewChansonInput):
+    """
+    Création complète d'une chanson via le Client.
+    """
+    try:
+        chanson_complete = chanson_client.add_new_chanson(
+            titre=chanson_data.titre,
+            artiste=chanson_data.artiste
+        )
+        return chanson_complete
+        
+    except Exception as e:
+        logging.error(f"Échec de la création de la chanson via client: {e}")
+        raise HTTPException(status_code=500, detail=f"Échec de la création de la chanson: {e}")
+
+
+@app.get("/chansons/{chanson_id}", response_model=ChansonModel, summary="Fournit les infos d'une chanson par son ID.")
+async def get_chanson_by_id(
+    chanson_id: int = Path(..., title="L'ID de la chanson à récupérer", ge=1)
+):
+    """
+    Récupère une chanson spécifique par son ID via le client.
+    """
+    try:
+        chanson = chanson_client.get_chanson_by_id(chanson_id)
+        
+        if not chanson:
+            raise HTTPException(
+                status_code=404, 
+                detail=f"La chanson avec l'ID {chanson_id} n'a pas été trouvée."
+            )
+        return chanson
+    except HTTPException as he:
+        raise he 
+    except Exception as e:
+        logging.error(f"Erreur récupération chanson {chanson_id} via client: {e}")
+        raise HTTPException(status_code=500, detail="Erreur interne.")
+
+
+@app.get("/chansons/{chanson_id}/lyrics", response_model=ParolesContentModel, summary="Retourne le texte des paroles d'une chanson.")
+async def get_lyrics_for_song(
+    chanson_id: int = Path(..., title="L'ID de la chanson", ge=1)
+):
+    """
+    Récupère le texte des paroles d'une chanson via le client.
+    """
+    try:
+        paroles = chanson_client.get_lyrics_by_chanson_id(chanson_id)
+
+        if not paroles:
+            raise HTTPException(
+                status_code=404, 
+                detail=f"Le contenu des paroles n'est pas disponible pour la chanson ID {chanson_id}."
+            )
+        return paroles
+    except HTTPException as he:
+        raise he 
+    except Exception as e:
+        logging.error(f"Erreur récupération paroles {chanson_id} via client: {e}")
+        raise HTTPException(status_code=500, detail="Erreur interne.")
+
+
+# --- Lancement de l'application ---
 if __name__ == "__main__":
     import uvicorn
-
     uvicorn.run(app, host="0.0.0.0", port=9876)
-
     logging.info("Arret du Webservice")

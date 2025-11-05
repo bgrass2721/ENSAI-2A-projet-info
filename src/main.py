@@ -11,7 +11,7 @@ if __name__ == "__main__":
 
     initialiser_logs("Application")
 
-    current_view = StartView("Bienvenue")
+    current_view = StartView()
     nb_erreurs = 0
 
     while current_view:
@@ -20,14 +20,14 @@ if __name__ == "__main__":
             break
         try:
             # Affichage du menu
-            vue_courante.afficher()
+            current_view.display_info()
 
             # Affichage des choix possibles
             current_view = current_view.choisir_menu()
         except Exception as e:
             logging.info(e)
             nb_erreurs += 1
-            current_view = AccueilVue("Une erreur est survenue, retour au menu principal")
+            current_view = StartView()
 
     # Lorsque l on quitte l application
     print("----------------------------------")
