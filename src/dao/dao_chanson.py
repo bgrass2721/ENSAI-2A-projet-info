@@ -17,7 +17,7 @@ class DAO_chanson(DAO):
                     VALUES (%(embed_paroles)s, %(titre)s, %(artiste)s, %(annee)s, %(str_paroles)s)
                     ON CONFLICT DO NOTHING;
                     """,
-                    # ON CONFLICT DO NOTHING les attributs PRIMARY KEY ou UNIQUE
+                    # ON CONFLICT DO NOTHING pour les attributs PRIMARY KEY ou UNIQUE
                     {
                         "embed_paroles": chanson.paroles.vecteur,
                         "titre": chanson.titre,
@@ -58,8 +58,8 @@ class DAO_chanson(DAO):
                     WHERE embed_paroles = %s;
                     """,
                     (embed_paroles,),
-                )
-                res = cursor.fetchone()  # (tire, artiste, annee)
+                )  # (tire, artiste, annee, str_paroles)
+                res = cursor.fetchone()
                 if res:
                     titre, artiste, annee, str_paroles = res
                     paroles = Paroles(content=str_paroles, vecteur=embed_paroles)
