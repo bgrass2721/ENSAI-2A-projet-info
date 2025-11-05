@@ -83,38 +83,69 @@ async def redirect_to_docs():
 @app.post("/playlists", response_model=PlaylistModel, tags=["Playlists"])
 async def create_playlist(data: PlaylistCreationModel):
     """
-    Crée une playlist à partir d'un mot-clé et d'un nombre de chansons.
-    Le nom de la playlist est généré automatiquement.
+    Crée une playlist à partir d'un nom/mot-clé et d'un nombre de chansons.
+    
+    - Le nom fourni est utilisé comme mot-clé de recherche ET comme nom de playlist
+    - Les chansons sont automatiquement recherchées basées sur le mot-clé
+    - Retourne la playlist créée avec toutes ses chansons
     """
     try:
         # Validation des entrées
-        if data.nbsongs <= 0 or data.nbsongs > 50:  # Limite raisonnable
+        if data.nbsongs <= 0 or data.nbsongs > 50:
             raise HTTPException(
                 status_code=400, 
                 detail="Le nombre de chansons doit être entre 1 et 50"
             )
         
-        if len(data.keyword.strip()) < 2:
+        if len(data.nom.strip()) < 2:
             raise HTTPException(
                 status_code=400,
-                detail="Le mot-clé doit contenir au moins 2 caractères"
+                detail="Le nom/mot-clé doit contenir au moins 2 caractères"
             )
         
-        # Appel du client avec seulement 2 paramètres
-        nouvelle_playlist = playlist_client.request_playlist(
-            keyword=data.keyword,
+        # Appel du client corrigé
+        nouvelle_playlist_objet = playlist_client.request_playlist(
+            keyword=data.nom,  # Utilise le nom comme mot-clé de recherche
             nbsongs=data.nbsongs
         )
         
-        if not nouvelle_playlist:
+        if not nouvelle_playlist_objet:
             raise HTTPException(
                 status_code=500,
                 detail="La création de la playlist a échoué"
             )
+        
+        # Conversion de l'objet Playlist métier en PlaylistModel
+        chansons_model = []
+        for chanson in nouvelle_playlist_objet.chansons:
+            # Gestion des paroles (optionnelles)
+            paroles_model = None
+            if chanson.paroles:
+                paroles_model = ParolesModel(
+                    vecteur=chanson.paroles.vecteur,
+                    content=chanson.paroles.content
+                )
             
-        return nouvelle_playlist
+            # Création du modèle de chanson
+            chanson_model = ChansonModel(
+                titre=chanson.titre,
+                artiste=chanson.artiste,
+                annee=chanson.annee,
+                paroles=paroles_model
+            )
+            chansons_model.append(chanson_model)
+        
+        # Création du modèle de playlist final
+        playlist_model = PlaylistModel(
+            id_playlist=getattr(nouvelle_playlist_objet, 'id', None),
+            nom=nouvelle_playlist_objet.nom,
+            chansons=chansons_model
+        )
+            
+        return playlist_model
         
     except HTTPException:
+        # Relance les exceptions HTTP déjà levées
         raise
     except Exception as e:
         logging.error(f"Erreur lors de la création de la playlist : {e}")

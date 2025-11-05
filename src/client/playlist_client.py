@@ -18,7 +18,7 @@ class PlaylistClient:
         # Nouvelle playlist
         new_playlist = PlaylistService.instantiate_playlist(keyword, nbsongs)
         DAO.add_playlist(new_playlist)
-        return new_playlist.afficher()
+        return new_playlist
 
     def get_playlists(self):
         """
