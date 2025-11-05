@@ -62,6 +62,7 @@ def create_pokemon():
     print(f"Type: {responses['type']}")
     print(f"Level: {responses['level']}")
     print(f"Attacks: {', '.join(responses['attacks'])}")
+    print(responses)
 
 # Lancer la fonction pour créer un Pokémon
 if __name__ == "__main__":
