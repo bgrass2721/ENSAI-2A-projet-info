@@ -67,3 +67,18 @@ class DAO_chanson(DAO):
                     paroles = Paroles(content=str_paroles, vecteur=embed_paroles)
                     return Chanson(titre, artiste, annee, paroles)
         return None
+
+    def del_chanson_via_embed_paroles(self, embed_paroles: list[float]) -> None:
+        """
+        Supprime une chanson de la table CHANSON, soit via l'embedding de ses paroles
+        """
+        with DBConnection().connection as connection:
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    """
+                    DELETE FROM CHANSON
+                    WHERE embed_paroles = %s;
+                    """,
+                    (embed_paroles,),
+                )
+            connection.commit()
