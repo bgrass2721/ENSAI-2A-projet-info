@@ -1,34 +1,8 @@
 import pytest
 
-# from business_object.playlist import Playlist  # Décommenter si les vrais BO sont disponibles
-from business_object.chanson import Chanson  # Décommenter si les vrais BO sont disponibles
-from service.chanson_service import ChansonService  # Assurez-vous que ce chemin est correct
-
-
-# --- Définitions simplifiées des Business Objects pour les tests ---
-class MockChanson:
-    """Simule la classe Chanson."""
-
-    def __init__(self, id):
-        # Un ID est crucial pour l'unicité et la comparaison
-        self.id = id
-
-    # Redéfinir __eq__ et __hash__ est nécessaire pour 'in' et 'remove'
-    def __eq__(self, other):
-        return isinstance(other, MockChanson) and self.id == other.id
-
-    def __hash__(self):
-        return hash(self.id)
-
-
-class MockPlaylist:
-    """Simule la classe Playlist."""
-
-    def __init__(self, chansons=None):
-        self.chansons = chansons if chansons is not None else []
-
-
-# -----------------------------------------------------------------
+from business_object.chanson import Chanson
+from business_object.paroles import Paroles
+from service.chanson_service import ChansonService
 
 
 class TestChansonService:
@@ -38,27 +12,37 @@ class TestChansonService:
         return ChansonService()
 
     @pytest.fixture
-    def chanson_a(self):
-        return MockChanson(id=1)
+    def titre(self):
+        return "Imagine"
 
     @pytest.fixture
-    def chanson_b(self):
-        return MockChanson(id=2)
+    def artiste(self):
+        return "John Lennon"
 
-    ### 2. Tests de `instantiate_chanson`
+    @pytest.fixture
+    def chanson(self):
+        titre = "Imagine"
+        artiste = "John Lennon"
+        return Chanson(titre, artiste)
 
-    def test_instantiate_chanson(self, service):
-        # GIVEN
-        chanson = service.instantiate_chanson("Hey Jude", "The Beatles")
+    def test_instantiate_chanson(self, service, titre, artiste, chanson):
+        """Teste l'instantiation d'une chanson, par défaut il n'y a pas d'année ni de paroles"""
+        new_chanson = service.instantiate_chanson(titre, artiste)
 
-        # WHEN
-        paroles = chanson.paroles
+        assert isinstance(new_chanson, Chanson)
+        assert new_chanson == chanson
+        assert new_chanson.annee is None
+        assert new_chanson.paroles is None
 
-        # THEN
-        assert paroles is None
-
-    def test_add_chanson_paroles(self, service):
-        chanson = service.instantiate_chanson("Hey Jude", "The Beatles")
+    def test_add_chanson_paroles(self, service, titre, artiste):
+        """Teste l'ajout des paroles et leur vectorisation"""
+        chanson = service.instantiate_chanson(titre, artiste)
         service.add_chanson_paroles(chanson)
 
         assert isinstance(chanson, Chanson)
+        assert chanson.paroles is not None
+        assert isinstance(chanson.paroles, Paroles)
+        assert isinstance(chanson.paroles.content, str)
+        assert chanson.paroles.vecteur is not None
+        assert isinstance(chanson.paroles.vecteur, list)
+        assert isinstance(chanson.paroles.vecteur[0], float)

@@ -41,3 +41,9 @@ class EmbeddingService(ABC):
         except Exception as e:
             print(f"Exception lors de la vectorisation: {str(e)}")
             return None
+
+
+if __name__ == "__main__":
+    text = "bonjour"
+    vect = EmbeddingService().vectorise(text)
+    print(type(vect))
