@@ -1,8 +1,7 @@
 import requests
 
 from business_object.chanson import Chanson
-from business_object.paroles import Paroles
-from service.embedding_service import EmbeddingService
+from service.paroles_embedding_service import ParolesEmbeddingService
 from service.paroles_service import ParolesService
 
 
@@ -18,9 +17,9 @@ class ChansonService:
         """
         Ajout du vec paroles
         """
-        paroles_str = ParolesService.add_from_API(chanson)
-        paroles_vecteur = EmbeddingService.vectorise(paroles_str)
-        chanson.paroles = Paroles(content=paroles_str, vecteur=paroles_vecteur)
+        paroles = ParolesService().add_from_API(chanson)
+        paroles.vecteur = ParolesEmbeddingService().vectorise(paroles.content)
+        chanson.paroles = paroles
 
     def add_annee(self, chanson: Chanson):
         """
@@ -31,7 +30,6 @@ class ChansonService:
         url = "https://lrclib.net/api/get"
 
         # Paramètres de la requête
-        params = {"track_name": chanson.titre, "artist_name": chanson.artiste}
         params = {"track_name": chanson.titre, "artist_name": chanson.artiste}
 
         try:
@@ -45,3 +43,9 @@ class ChansonService:
 
         except requests.exceptions.RequestException as e:
             raise Exception(f"Erreur lors de la requête : {e}")
+
+
+if __name__ == "__main__":
+    chanson = ChansonService().instantiate_chanson("Imagine", "John Lennon")
+    ChansonService().add_chanson_paroles(chanson)
+    print(chanson.paroles)

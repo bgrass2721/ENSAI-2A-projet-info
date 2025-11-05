@@ -1,6 +1,7 @@
 from business_object.chanson import Chanson
 from business_object.playlist import Playlist
-from dao.dao import DAO
+from dao.dao_chanson import DAO_chanson
+from dao.dao_paroles import DAO_paroles
 from service.request_embedding_service import RequestEmbeddingService
 
 
@@ -24,7 +25,7 @@ class PlaylistService:
             un objet playlist
         """
         # Extraction de tous les objets paroles de la BDD
-        paroles = DAO.get_paroles()
+        paroles = DAO_paroles().get_paroles()
         # Vectorisation du mot-clé
         key_vector = RequestEmbeddingService.vectorise(keyword)
         # Initialisation de la liste des distances
@@ -40,11 +41,15 @@ class PlaylistService:
         if not nbsongs > len(compares):
             # On ajoute les nbsongs premières chansons correspondant aux vecteurs de la liste des distances
             for i in range(nbsongs):
-                chansons.append(DAO.get_chanson_from_paroles(compares[i][0]))
+                chansons.append(
+                    DAO_chanson().get_chanson_from_embed_paroles(compares[i][0].vecteur)
+                )
         # Sinon, on ajoute toutes les chansons dans l'ordre
         else:
             for compare in compares:
-                chansons.append(DAO.get_chanson_from_paroles(compare[0]))
+                chansons.append(
+                    DAO_chanson().get_chanson_from_from_embed_paroles(compare[0].vecteur)
+                )
         # Retour de l'objet playlist avec les chansons
         return Playlist(keyword, chansons)
 
@@ -75,3 +80,7 @@ class PlaylistService:
         """
         if chanson in playlist.chansons:
             playlist.chansons.remove(chanson)
+
+
+if __name__ == "__main__":
+    PlaylistService().instantiate_playlist("amour", 10)

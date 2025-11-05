@@ -1,4 +1,5 @@
-from .paroles import Paroles  # Import de la classe Paroles définie dans le même package
+from .paroles import \
+    Paroles  # Import de la classe Paroles définie dans le même package
 
 
 class Chanson:
@@ -36,6 +37,10 @@ class Chanson:
         self.annee = annee
         self.paroles = paroles
 
+    def __eq__(self, chanson2):
+        """Pour tester si deux objets chansons sont identiques"""
+        return self.titre == chanson2.titre and self.artiste == chanson2.artiste
+
     def afficher(self) -> str:
         """
         Retourne une représentation textuelle de la chanson.
@@ -49,4 +54,3 @@ class Chanson:
         if self.annee:
             return f"{self.titre} - {self.artiste} ({self.annee})"
         return f"{self.titre} - {self.artiste}"
-
