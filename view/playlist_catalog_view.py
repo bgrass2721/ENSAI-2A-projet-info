@@ -27,23 +27,6 @@ class PlaylistCatalogView(AbstractView):
         reponse = prompt(self.__questions)
         if reponse["choix"] == "Quitter":
             pass
-
-        elif reponse["choix"] == "Ajouter une musique":
-            from view.connection_view import ConnectionView
-
-            return ConnectionView()
-
-        elif reponse["choix"] == "Créer une playlist":
-            from view.battle_view import BattleView
-
-            return BattleView()
-
-        elif reponse["choix"] == "Catalogue de musiques":
-            from view.pokemon_list_view import PokemonListView
-
-            return PokemonListView()
-
-        elif reponse["choix"] == "Catalogue de playlists":
-            from view.attack_list_view import AttackListView
-
-            return AttackListView()
+        else: 
+            responses = requests.get("http://127.0.0.1:8000/playlists", json=responses)
+            print()
