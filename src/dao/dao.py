@@ -36,7 +36,7 @@ class DAO(ABC):
 
     def _del_data_table(self, nom_table: str | None) -> None:
         """
-        Vide la table donnée en majuscule en argument 
+        Vide la table donnée en majuscule en argument
         Si aucune table n'est spécifiée, toutes les tables de la DB sont vidées
         """
         # Ordre logique de suppression pour respecter les contraintes FK

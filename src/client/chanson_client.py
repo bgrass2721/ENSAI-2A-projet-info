@@ -1,3 +1,5 @@
+from business_object.paroles import Paroles
+from dao.dao import DAO
 from dao.dao_chanson import DAO_chanson
 from service.chanson_service import ChansonService
 from service.paroles_service import ParolesService

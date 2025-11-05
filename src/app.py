@@ -14,7 +14,7 @@ from utils.log_init import initialiser_logs
 #  Création et configuration de l’application FastAPI
 
 app = FastAPI(title="API Mus’IA - Gestion des Playlists")
-initialiser_logs("Webservice Mus’IA")
+# initialiser_logs("Webservice Mus’IA")
 
 playlist_client = PlaylistClient()
 chanson_client = ChansonClient()
@@ -34,8 +34,10 @@ class ChansonModel(BaseModel):
     annee: Optional[int]
     paroles: Optional[ParolesModel]
 
-    class Config:
-        orm_mode = True
+    model_config = {
+    "from_attributes": True
+}
+
 
 
 class PlaylistModel(BaseModel):
@@ -44,8 +46,10 @@ class PlaylistModel(BaseModel):
     nom: str
     chansons: Optional[List[ChansonModel]]
 
-    class Config:
-        orm_mode = True
+    model_config = {
+    "from_attributes": True
+}
+
 
 
 class PlaylistCreationModel(BaseModel):
