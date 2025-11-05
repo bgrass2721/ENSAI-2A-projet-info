@@ -121,7 +121,8 @@ class DAO_playlist(DAO):
                     for _, titre, artiste, annee, embed_paroles, str_paroles in res:
                         paroles = Paroles(content=str_paroles, vecteur=embed_paroles)
                         chansons.append(Chanson(titre, artiste, annee, paroles))
-                    return Playlist(nom, chansons)
+                    playlist = Playlist(nom, chansons)
+                    return playlist
 
     def _del_playlist_via_nom(self, nom: int) -> bool:
         """
