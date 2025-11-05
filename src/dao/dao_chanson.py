@@ -9,6 +9,7 @@ class DAO_chanson(DAO):
         """
         Ajoute une chanson à la table CHANSON de la BD
         """
+        modif = 0
         with DBConnection().connection as connection:
             with connection.cursor() as cursor:
                 cursor.execute(
@@ -98,6 +99,7 @@ class DAO_chanson(DAO):
         """
         Supprime une chanson de la table CHANSON via l'embedding pour l'identifier
         """
+        modif = 0
         with DBConnection().connection as connection:
             with connection.cursor() as cursor:
                 cursor.execute(

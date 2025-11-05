@@ -13,6 +13,7 @@ class DAO_playlist(DAO):
         """
         Ajoute une playlist à la table PLAYLIST de la BD et remplit la table CATALOGUE de la BD
         """
+        modif = 0
         with DBConnection().connection as connection:
             with connection.cursor() as cursor:
                 cursor.execute(
@@ -62,7 +63,7 @@ class DAO_playlist(DAO):
                 cursor.execute("""
                     SELECT 
                         p.id_playlist,
-                        p.nom 
+                        p.nom, 
                         c.titre,
                         c.artiste,
                         c.annee,
@@ -131,6 +132,7 @@ class DAO_playlist(DAO):
         Les lignes associées dans CATALOGUE sont supprimées
         automatiquement grâce au ON DELETE CASCADE
         """
+        modif = 0
         with DBConnection().connection as connection:
             with connection.cursor() as cursor:
                 cursor.execute(
