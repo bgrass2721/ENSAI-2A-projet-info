@@ -6,7 +6,7 @@ from dao.db_connection import DBConnection
 
 
 class DAO_playlist(DAO):
-    def add_playlist(self, playlist: Playlist) -> None:
+    def add_playlist(self, playlist: Playlist) -> bool:
         """
         Ajoute une playlist à la table PLAYLIST de la BD et remplit la table CATALOGUE de la BD
         """
@@ -46,7 +46,11 @@ class DAO_playlist(DAO):
                                 """,
                                 (id_playlist, id_chanson),
                             )
+                            modif = cursor.rowcount
             connection.commit()
+        if modif == 1:
+            return True
+        return False
 
     def get_playlists(self) -> list[Playlist]:
         """
@@ -105,17 +109,18 @@ class DAO_playlist(DAO):
                     (id_playlist,),
                 )  # [(nom, embed_paroles, titre, artiste, annee, str_paroles), (...), ...]
                 res = cursor.fetchall()
-                chansons = []
-                for _, embed_paroles, titre, artiste, annee, str_paroles in res:
-                    paroles = Paroles(content=str_paroles, vecteur=embed_paroles)
-                    # Création objet Chanson
-                    chanson = Chanson(titre, artiste, annee, paroles)
-                    # Ajout de la chanson à liste de chansons
-                    chansons.append(chanson)
+                if res:
+                    chansons = []
+                    for _, embed_paroles, titre, artiste, annee, str_paroles in res:
+                        paroles = Paroles(content=str_paroles, vecteur=embed_paroles)
+                        # Création objet Chanson
+                        chanson = Chanson(titre, artiste, annee, paroles)
+                        # Ajout de la chanson à liste de chansons
+                        chansons.append(chanson)
                     # Création objet Playlist
-                nom = res[0][0]
-                playlist = Playlist(nom, chansons)
-                return playlist
+                    nom = res[0][0]
+                    playlist = Playlist(nom, chansons)
+                    return playlist
 
     def _del_playlist_via_id(self, id_playlist: int) -> bool:
         """
@@ -132,8 +137,8 @@ class DAO_playlist(DAO):
                     """,
                     (id_playlist,),
                 )
-                suppr = cursor.rowcount
+                modif = cursor.rowcount
             connection.commit()
-            if suppr == 1:  # id_playlist est un attribut unique
-                return True
+        if modif == 1:
+            return True
         return False

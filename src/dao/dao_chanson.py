@@ -13,61 +13,68 @@ class DAO_chanson(DAO):
             with connection.cursor() as cursor:
                 cursor.execute(
                     """
-                    INSERT INTO CHANSON (embed_paroles, titre, artiste, annee, str_paroles)
-                    VALUES (%(embed_paroles)s, %(titre)s, %(artiste)s, %(annee)s, %(str_paroles)s)
+                    INSERT INTO CHANSON (titre, artiste, annee, embed_paroles, str_paroles)
+                    VALUES (%(titre)s, %(artiste)s, %(annee)s, %(embed_paroles)s, %(str_paroles)s)
                     ON CONFLICT DO NOTHING;
                     """,
-                    # ON CONFLICT DO NOTHING pour les attributs PRIMARY KEY ou UNIQUE
+                    # ON CONFLICT DO NOTHING pour les attributs UNIQUE
                     {
-                        "embed_paroles": chanson.paroles.vecteur,
                         "titre": chanson.titre,
                         "artiste": chanson.artiste,
                         "annee": chanson.annee,
+                        "embed_paroles": [round(x, 6) for x in chanson.paroles.vecteur],
                         "str_paroles": chanson.paroles.content,
                     },
                 )
-                connection.commit()
+                modif = cursor.rowcount
+            connection.commit()
+        if modif == 1:
+            return True
+        return
 
     def get_chansons(self) -> list[Chanson] | None:
         """
-        Liste l'objet Chanson de toutes les chansons enregistrées dans la BD
+        Liste toutes les Chanson enregistrées dans la BD
         """
         list_Chansons = []
         with DBConnection().connection as connection:
             with connection.cursor() as cursor:
-                cursor.execute(
-                    "SELECT embed_paroles, titre, artiste, annee, str_paroles FROM CHANSON;"
-                )  # [(embed_paroles, titre, artiste, annee, str_paroles), (...), ...]
+                cursor.execute("""
+                    SELECT titre, artiste, annee, embed_paroles, str_paroles
+                    FROM CHANSON;
+                    """)  # [(titre, artiste, annee, embed_paroles, str_paroles), (...), ...]
                 res = cursor.fetchall()
-                if res:  # None comme False donc si None la condition n'est pas remplie
-                    for tup in res:
-                        vecteur, titre, artiste, annee, content = tup
-                        paroles = Paroles(content=content, vecteur=vecteur)
+                if res:  # None traité comme False : la condition n'est pas remplie
+                    for titre, artiste, annee, embed_paroles, str_paroles in res:
+                        paroles = Paroles(content=str_paroles, vecteur=embed_paroles)
                         chanson = Chanson(titre, artiste, annee, paroles)
                         list_Chansons.append(chanson)
-                return list_Chansons
+                    return list_Chansons
 
     def get_chanson_from_embed_paroles(self, embed_paroles: list[float]) -> Chanson | None:
-        # id = embed_paroles
+        """
+        Récupère un object Chanson via l'embedding de paroles
+        """
         with DBConnection().connection as connection:
             with connection.cursor() as cursor:
                 cursor.execute(
                     """
-                    SELECT titre, artiste, annee, str_paroles
+                    SELECT titre, artiste, annee, embed_parole, str_paroles
                     FROM CHANSON
                     WHERE embed_paroles::text = %s::text;
                     """,
                     (embed_paroles,),
-                )  # (tire, artiste, annee, str_paroles)
+                )  # (tire, artiste, annee, embed_paroles, str_paroles)
                 res = cursor.fetchone()
                 if res:
-                    titre, artiste, annee, str_paroles = res
+                    titre, artiste, annee, embed_paroles, str_paroles = res
                     paroles = Paroles(content=str_paroles, vecteur=embed_paroles)
-                    return Chanson(titre, artiste, annee, paroles)
+                    chanson = Chanson(titre, artiste, annee, paroles)
+                    return chanson
 
     def _del_chanson_via_embed_paroles(self, embed_paroles: list[float]) -> bool:
         """
-        Supprime une chanson de la table CHANSON, soit via l'embedding de ses paroles
+        Supprime une chanson de la table CHANSON via l'embedding pour l'identifier
         """
         with DBConnection().connection as connection:
             with connection.cursor() as cursor:
@@ -78,8 +85,8 @@ class DAO_chanson(DAO):
                     """,
                     (embed_paroles,),
                 )
-                suppr = cursor.rowcount
+                modif = cursor.rowcount
             connection.commit()
-            if suppr == 1:  # embed_paroles est un attribut unique
-                return True
+        if modif == 1:
+            return True
         return False
