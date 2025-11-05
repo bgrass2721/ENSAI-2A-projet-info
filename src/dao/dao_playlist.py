@@ -62,18 +62,18 @@ class DAO_playlist(DAO):
                 cursor.execute("""
                     SELECT 
                         p.id_playlist,
-                        p.nom AS playlist_nom,
-                        ch.titre,
-                        ch.artiste,
-                        ch.annee,
-                        ch.embed_paroles,
-                        ch.str_paroles
+                        p.nom 
+                        c.titre,
+                        c.artiste,
+                        c.annee,
+                        c.embed_paroles,
+                        c.str_paroles
                     FROM PLAYLIST p
-                    JOIN CATALOGUE c ON p.id_playlist = c.id_playlist
-                    JOIN CHANSON ch ON ch.id_chanson = c.id_chanson
+                    JOIN CATALOGUE cat ON p.id_playlist = cat.id_playlist
+                    JOIN CHANSON c ON c.id_chanson = cat.id_chanson
                     ORDER BY p.id_playlist;
                 """)
-                # [(id_playlist, nom_playlist, titre, artiste, annee, embed_paroles, str_paroles),
+                # [(id_playlist, nom, titre, artiste, annee, embed_paroles, str_paroles),
                 # (...), ...]
                 res = cursor.fetchall()
                 if res:
@@ -81,7 +81,7 @@ class DAO_playlist(DAO):
                     # 0 car id_playlist est le premier élément de chaque tuple
                     for id_playlist, group in groupby(res, key=itemgetter(0)):
                         group = list(group)
-                        # [(id_playlist, nom_playlist, titre, artiste, annee, embed_paroles, str_paroles),
+                        # [(id_playlist, nom, titre, artiste, annee, embed_paroles, str_paroles),
                         # (...), ...] avec le même id_playlist dans chaque tuple
                         chansons = []
                         for _, _, titre, artiste, annee, embed_paroles, str_paroles in group:
