@@ -1,7 +1,7 @@
-from src.business_object.paroles import Paroles
-from src.dao.dao import DAO
-from src.service.chanson_service import ChansonService
-from src.service.paroles_service import ParolesService
+from business_object.paroles import Paroles
+from dao.dao import DAO
+from service.chanson_service import ChansonService
+from service.paroles_service import ParolesService
 
 
 class ChansonClient:

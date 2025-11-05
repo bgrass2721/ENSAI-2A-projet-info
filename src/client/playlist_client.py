@@ -1,5 +1,5 @@
-from src.dao.dao import DAO
-from src.service.playlist_service import PlaylistService
+from dao.dao import DAO
+from service.playlist_service import PlaylistService
 
 
 class PlaylistClient:
