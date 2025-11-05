@@ -64,7 +64,7 @@ class DAO_chanson(DAO):
                     (embed_paroles,),
                 )
                 res = cursor.fetchone()  # (tire, artiste, annee)
-                if res:
+                if res:  # None comme False donc si None la condition n'est pas remplie
                     titre, artiste, annee, str_paroles = res
                     paroles = Paroles(content=str_paroles, vecteur=embed_paroles)
                     return Chanson(titre, artiste, annee, paroles)

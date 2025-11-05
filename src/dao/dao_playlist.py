@@ -23,8 +23,9 @@ class DAO_playlist(DAO):
                     """,
                     (nom,),
                 )  # (id, ) # si une playlist porte le même nom : retourne None
-                id_playlist = cursor.fetchone()[0]
+                id_playlist = cursor.fetchone()
                 if id_playlist:
+                    id_playlist = id_playlist[0]
                     for chanson in chansons:
                         embed_paroles = chanson.paroles.vecteur
                         cursor.execute(
