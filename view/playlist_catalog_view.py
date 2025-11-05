@@ -3,20 +3,19 @@ from InquirerPy import prompt
 from view.abstract_view import AbstractView
 
 
-class StartView(AbstractView):
+class PlaylistCatalogView(AbstractView):
     def __init__(self):
+        playlists = requests.get("http://127.0.0.1:8000/playlists")
+        list_playlist= ["Quitter"]
+        for playlist in playlists:
+            list_playlist.append(playlist.nom)
+
         self.__questions = [
             {
-                "type": "list",
-                "name": "choix",
-                "message": f"Bonjour, que voulez vous faire ?",
-                "choices": [
-                    "Ajouter une musique",
-                    "Créer une playlist",
-                    "Catalogue de musiques",
-                    "Catalogue de playlists",
-                    "Quitter",
-                ],
+            "type": "list",  # Liste déroulante avec options
+            "message": "Playlist disponible :",
+            "name": "playlist",  # Nom de la réponse
+            "choices": list_playlist  # Options disponibles
             }
         ]
 
