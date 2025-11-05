@@ -21,7 +21,7 @@ class DAO(ABC):
                     titre VARCHAR(255) NOT NULL,
                     artiste VARCHAR(255) NOT NULL,
                     str_paroles TEXT NOT NULL,
-                    annee INT
+                    annee INT 
                     );
                     CREATE TABLE IF NOT EXISTS CATALOGUE (
                     id_playlist INT NOT NULL,
@@ -48,23 +48,7 @@ class DAO(ABC):
                 )
             connection.commit()
 
-    def del_chanson_via_titre_artiste(self, titre: str, artiste: str) -> None:
-        """
-        Supprime une chanson de la table CHANSON, soit via le titre ET l'artiste
-        """
-        with DBConnection().connection as connection:
-            with connection.cursor() as cursor:
-                cursor.execute(
-                    """
-                    DELETE FROM CHANSON
-                    WHERE titre = %s
-                    AND artiste = %s;
-                    """,
-                    (titre, artiste),
-                )
-            connection.commit()
-
-    def del_playlist_via_nom(self, nom: str) -> None:
+    def del_playlist_via_id(self, id: int) -> None:
         """
         Supprime une playlist de la table PLAYLIST via son nom.
         Les lignes associées dans CATALOGUE sont supprimées
@@ -75,9 +59,9 @@ class DAO(ABC):
                 cursor.execute(
                     """
                     DELETE FROM PLAYLIST
-                    WHERE nom = %s;
+                    WHERE id = %s;
                     """,
-                    (nom,),
+                    (id,),
                 )
             connection.commit()
 
