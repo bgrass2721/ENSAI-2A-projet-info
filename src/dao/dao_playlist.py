@@ -59,7 +59,7 @@ class DAO_playlist(DAO):
                         WHERE cat.id_playlist = %s;
                         """,
                         (id_playlist,),
-                    )  # [(embed_paroles, titre, artiste, annee, str_paroles), (...), ...]
+                    )  # [(nom, embed_paroles, titre, artiste, annee, str_paroles), (...), ...]
                     tup_chansons = cursor.fetchall()
                     chansons = []
                     for embed_paroles, titre, artiste, annee, str_paroles in tup_chansons:
@@ -103,3 +103,20 @@ class DAO_playlist(DAO):
                 playlist = Playlist(nom, chansons)
                 return playlist
         return None
+
+    def del_playlist_via_id(self, id_playlist: int) -> None:
+        """
+        Supprime une playlist de la table PLAYLIST via son id
+        Les lignes associées dans CATALOGUE sont supprimées
+        automatiquement grâce au ON DELETE CASCADE
+        """
+        with DBConnection().connection as connection:
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    """
+                    DELETE FROM PLAYLIST
+                    WHERE id_playlist = %s;
+                    """,
+                    (id_playlist,),
+                )
+            connection.commit()

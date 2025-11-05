@@ -33,38 +33,6 @@ class DAO(ABC):
                     """)
                 connection.commit()
 
-    def del_chanson_via_embed_paroles(self, embed_paroles: list[float]) -> None:
-        """
-        Supprime une chanson de la table CHANSON, soit via l'embedding de ses paroles
-        """
-        with DBConnection().connection as connection:
-            with connection.cursor() as cursor:
-                cursor.execute(
-                    """
-                    DELETE FROM CHANSON
-                    WHERE embed_paroles = %s;
-                    """,
-                    (embed_paroles,),
-                )
-            connection.commit()
-
-    def del_playlist_via_id(self, id: int) -> None:
-        """
-        Supprime une playlist de la table PLAYLIST via son nom.
-        Les lignes associées dans CATALOGUE sont supprimées
-        automatiquement grace au ON DELETE CASCADE
-        """
-        with DBConnection().connection as connection:
-            with connection.cursor() as cursor:
-                cursor.execute(
-                    """
-                    DELETE FROM PLAYLIST
-                    WHERE id = %s;
-                    """,
-                    (id,),
-                )
-            connection.commit()
-
     def del_data_table(self, nom_table: str | None) -> None:
         """
         Vide complètement les tables passées en argument.
