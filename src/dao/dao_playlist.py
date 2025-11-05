@@ -73,54 +73,55 @@ class DAO_playlist(DAO):
                     JOIN CHANSON ch ON ch.id_chanson = c.id_chanson
                     ORDER BY p.id_playlist;
                 """)
+                # [(id_playlist, nom_playlist, titre, artiste, annee, embed_paroles, str_paroles),
+                # (...), ...]
                 res = cursor.fetchall()
-                if res:  
-                
-                # on trie selon
-                for id_playlist, group in groupby(rows, key=itemgetter(0)):
-                    group = list(group)
-                    nom_playlist = group[0][1]
-
-                    chansons = []
-                    for _, _, titre, artiste, annee, embed_paroles, str_paroles in group:
-                        paroles = Paroles(content=str_paroles, vecteur=embed_paroles)
-                        chanson = Chanson(titre, artiste, annee, paroles)
-                        chansons.append(chanson)
-
-                    playlists.append(Playlist(nom_playlist, chansons))
-
-        return playlists if playlists else None
+                if res:
+                    # GROUP BY id_playlist
+                    # 0 car id_playlist est le premier élément de chaque tuple
+                    for id_playlist, group in groupby(res, key=itemgetter(0)):
+                        group = list(group)
+                        # [(id_playlist, nom_playlist, titre, artiste, annee, embed_paroles, str_paroles),
+                        # (...), ...] avec le même id_playlist dans chaque tuple
+                        chansons = []
+                        for _, _, titre, artiste, annee, embed_paroles, str_paroles in group:
+                            paroles = Paroles(content=str_paroles, vecteur=embed_paroles)
+                            chanson = Chanson(titre, artiste, annee, paroles)
+                            chansons.append(chanson)
+                        nom = group[0][1]
+                        playlist = Playlist(nom, chansons)
+                        playlists.append(playlist)
+                    return playlists
 
     def get_playlist_from_nom(self, nom: str) -> Playlist | None:
         """
-        Liste tous les objets Playlist des playlists enregistrés dans la BD
+        Récupère un objet Playlist à partir de son nom.
         """
         with DBConnection().connection as connection:
             with connection.cursor() as cursor:
-                # Récupération des chansons et du nom de la playlist
                 cursor.execute(
                     """
-                    SELECT p.nom, c.embed_paroles, c.titre, c.artiste, c.annee, c.str_paroles
+                    SELECT 
+                        p.nom, 
+                        c.titre, 
+                        c.artiste, 
+                        c.annee, 
+                        c.embed_paroles, 
+                        c.str_paroles
                     FROM PLAYLIST p
                     JOIN CATALOGUE cat ON p.id_playlist = cat.id_playlist
                     JOIN CHANSON c ON c.embed_paroles = cat.embed_paroles
-                    WHERE cat.id_playlist = %s;
-                    """,
-                    (id_playlist,),
-                )  # [(nom, embed_paroles, titre, artiste, annee, str_paroles), (...), ...]
+                    WHERE p.nom = %s;
+                """,
+                    (nom,),
+                )
                 res = cursor.fetchall()
                 if res:
                     chansons = []
-                    for _, embed_paroles, titre, artiste, annee, str_paroles in res:
+                    for _, titre, artiste, annee, embed_paroles, str_paroles in res:
                         paroles = Paroles(content=str_paroles, vecteur=embed_paroles)
-                        # Création objet Chanson
-                        chanson = Chanson(titre, artiste, annee, paroles)
-                        # Ajout de la chanson à liste de chansons
-                        chansons.append(chanson)
-                    # Création objet Playlist
-                    nom = res[0][0]
-                    playlist = Playlist(nom, chansons)
-                    return playlist
+                        chansons.append(Chanson(titre, artiste, annee, paroles))
+                    return Playlist(nom, chansons)
 
     def _del_playlist_via_nom(self, nom: int) -> bool:
         """
