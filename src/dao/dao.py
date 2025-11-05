@@ -34,10 +34,10 @@ class DAO(ABC):
                     """)
                 connection.commit()
 
-    def del_data_table(self, nom_table: str | None) -> None:
+    def _del_data_table(self, nom_table: str | None) -> None:
         """
-        Vide complètement les tables passées en argument.
-        Si aucune table n'est spécifiée, vide toutes les tables sont vidées
+        Vide la table donnée en majuscule en argument 
+        Si aucune table n'est spécifiée, toutes les tables de la DB sont vidées
         """
         # Ordre logique de suppression pour respecter les contraintes FK
         ordre = ["CATALOGUE", "PLAYLIST", "CHANSON"]
@@ -46,11 +46,9 @@ class DAO(ABC):
                 with connection.cursor() as cursor:
                     cursor.execute(f"DELETE FROM {nom_table};")
                 connection.commit()
-        elif nom_table is None:
+        if nom_table is None:
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
                     for nom_table in ordre:
                         cursor.execute(f"DELETE FROM {nom_table};")
                 connection.commit()
-        else:
-            return None

@@ -70,7 +70,7 @@ class DAO_chanson(DAO):
                     return chanson
         return None
 
-    def del_chanson_via_embed_paroles(self, embed_paroles: list[float]) -> None:
+    def _del_chanson_via_embed_paroles(self, embed_paroles: list[float]) -> None:
         """
         Supprime une chanson de la table CHANSON via l'embedding pour l'identifier
         """
