@@ -104,7 +104,6 @@ class DAO_playlist(DAO):
                 cursor.execute(
                     """
                     SELECT 
-                        p.nom, 
                         c.titre, 
                         c.artiste, 
                         c.annee, 
@@ -114,15 +113,18 @@ class DAO_playlist(DAO):
                     JOIN CATALOGUE cat ON p.id_playlist = cat.id_playlist
                     JOIN CHANSON c ON c.embed_paroles = cat.embed_paroles
                     WHERE p.nom = %s;
-                """,
+                    """,
                     (nom,),
                 )
+                # [(titre, artiste, annee, embed_paroles, str_paroles),
+                # (...), ...]
                 res = cursor.fetchall()
                 if res:
                     chansons = []
-                    for _, titre, artiste, annee, embed_paroles, str_paroles in res:
+                    for titre, artiste, annee, embed_paroles, str_paroles in res:
                         paroles = Paroles(content=str_paroles, vecteur=embed_paroles)
-                        chansons.append(Chanson(titre, artiste, annee, paroles))
+                        chanson = Chanson(titre, artiste, annee, paroles)
+                        chansons.append(chanson)
                     playlist = Playlist(nom, chansons)
                     return playlist
 
