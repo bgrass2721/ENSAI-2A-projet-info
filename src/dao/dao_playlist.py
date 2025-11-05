@@ -70,7 +70,7 @@ class DAO_playlist(DAO):
                         c.str_paroles
                     FROM PLAYLIST p
                     JOIN CATALOGUE cat ON p.id_playlist = cat.id_playlist
-                    JOIN CHANSON c ON c.id_chanson = cat.id_chanson
+                    JOIN CHANSON c ON cat.id_chanson = c.id_chanson
                     ORDER BY p.id_playlist;
                 """)
                 # [(id_playlist, nom, titre, artiste, annee, embed_paroles, str_paroles),
