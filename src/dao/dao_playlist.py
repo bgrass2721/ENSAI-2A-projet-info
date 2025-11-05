@@ -10,8 +10,6 @@ class DAO_playlist(DAO):
         """
         Ajoute une playlist à la table PLAYLIST de la BD et remplit la table CATALOGUE de la BD
         """
-        nom = playlist.nom
-        chansons = playlist.chansons
         with DBConnection().connection as connection:
             with connection.cursor() as cursor:
                 cursor.execute(
@@ -21,21 +19,34 @@ class DAO_playlist(DAO):
                     ON CONFLICT DO NOTHING
                     RETURNING id_playlist;
                     """,
-                    (nom,),
-                )  # (id, ) # si une playlist porte le même nom : retourne None
-                id_playlist = cursor.fetchone()
-                if id_playlist:
-                    id_playlist = id_playlist[0]
+                    (playlist.nom,),
+                )  # (id_playlist, ) 
+                res = cursor.fetchone()
+                if res: # si une playlist porte déjà le même nom : retourne None
+                    id_playlist = res[0]
+                    chansons = playlist.chansons
                     for chanson in chansons:
                         embed_paroles = chanson.paroles.vecteur
+                        # Récupération de id_chanson via l'embedding des paroles qui est unique
                         cursor.execute(
                             """
-                            INSERT INTO CATALOGUE (id_playlist, embed_paroles)
-                            VALUES (%s, %s);
+                            SELECT id_chanson 
+                            FROM CHANSON
+                            WHERE embed_paroles::text = %s::text;
                             """,
-                            (id_playlist, embed_paroles),
-                        )
-                connection.commit()
+                            (embed_paroles,),
+                        )  # (id_chanson, ) 
+                        res = cursor.fetchone()
+                        if res:
+                            id_chanson = res[0]
+                            cursor.execute(
+                                """
+                                INSERT INTO CATALOGUE (id_playlist, id_chanson)
+                                VALUES (%s, %s);
+                                """,
+                                (id_playlist, id_chanson),
+                            )
+            connection.commit()
 
     def get_playlists(self) -> list[Playlist]:
         """
@@ -107,7 +118,7 @@ class DAO_playlist(DAO):
                 return playlist
         return None
 
-    def del_playlist_via_id(self, id_playlist: int) -> None:
+    def _del_playlist_via_id(self, id_playlist: int) -> None:
         """
         Supprime une playlist de la table PLAYLIST via son id
         Les lignes associées dans CATALOGUE sont supprimées

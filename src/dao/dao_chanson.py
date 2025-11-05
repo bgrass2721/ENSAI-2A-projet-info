@@ -66,7 +66,7 @@ class DAO_chanson(DAO):
                     return Chanson(titre, artiste, annee, paroles)
         return None
 
-    def del_chanson_via_embed_paroles(self, embed_paroles: list[float]) -> None:
+    def _del_chanson_via_embed_paroles(self, embed_paroles: list[float]) -> None:
         """
         Supprime une chanson de la table CHANSON, soit via l'embedding de ses paroles
         """

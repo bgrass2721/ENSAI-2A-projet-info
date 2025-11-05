@@ -1,34 +1,10 @@
+from unittest.mock import patch
+
 import pytest
 
-# from business_object.playlist import Playlist  # Décommenter si les vrais BO sont disponibles
-# from business_object.chanson import Chanson  # Décommenter si les vrais BO sont disponibles
-from service.playlist_service import PlaylistService  # Assurez-vous que ce chemin est correct
-
-
-# --- Définitions simplifiées des Business Objects pour les tests ---
-class MockChanson:
-    """Simule la classe Chanson."""
-
-    def __init__(self, id):
-        # Un ID est crucial pour l'unicité et la comparaison
-        self.id = id
-
-    # Redéfinir __eq__ et __hash__ est nécessaire pour 'in' et 'remove'
-    def __eq__(self, other):
-        return isinstance(other, MockChanson) and self.id == other.id
-
-    def __hash__(self):
-        return hash(self.id)
-
-
-class MockPlaylist:
-    """Simule la classe Playlist."""
-
-    def __init__(self, chansons=None):
-        self.chansons = chansons if chansons is not None else []
-
-
-# -----------------------------------------------------------------
+from business_object.playlist import Playlist
+from service.chanson_service import ChansonService
+from service.playlist_service import PlaylistService
 
 
 class TestPlaylistService:
@@ -39,20 +15,39 @@ class TestPlaylistService:
 
     @pytest.fixture
     def chanson_a(self):
-        return MockChanson(id=1)
+        titre = "Imagine"
+        artiste = "John Lennon"
+        return ChansonService().instantiate_chanson(titre, artiste)
 
     @pytest.fixture
     def chanson_b(self):
-        return MockChanson(id=2)
+        titre = "Hey Jude"
+        artiste = "The Beatles"
+        return ChansonService().instantiate_chanson(titre, artiste)
+
+    @pytest.fixture
+    def chanson_c(self):
+        titre = "Let It Be"
+        artiste = "The Beatles"
+        return ChansonService().instantiate_chanson(titre, artiste)
+
+    @pytest.fixture
+    def keyword(self):
+        return "love"
 
     @pytest.fixture
     def playlist_vide(self):
-        return MockPlaylist()
+        return Playlist(1, "vide")
 
     @pytest.fixture
     def playlist_pleine(self, chanson_a, chanson_b):
         # Créer une playlist contenant déjà chanson_a et chanson_b
-        return MockPlaylist(chansons=[chanson_a, chanson_b])
+        return Playlist(1, "vide", [chanson_a, chanson_b])
+
+    ### 1. Tests de `instantiate_playlist`
+
+    # def test_instantiate_playlist(self, service, keyword, chanson_a, chanson_b, chanson_c):
+        
 
     ### 2. Tests de `add_chanson`
 
@@ -81,9 +76,7 @@ class TestPlaylistService:
         assert len(playlist_pleine.chansons) == 2
         print("\n✓ Ajout de chanson déjà existante ignoré.")
 
-    def test_add_nouvelle_chanson_a_playlist_pleine(
-        self, service, playlist_pleine, chanson_c=MockChanson(id=3)
-    ):
+    def test_add_nouvelle_chanson_a_playlist_pleine(self, service, playlist_pleine, chanson_c):
         """Test l'ajout d'une nouvelle chanson à une playlist déjà remplie."""
 
         # État initial: 2 chansons
@@ -110,7 +103,7 @@ class TestPlaylistService:
         assert chanson_a not in playlist_pleine.chansons
         print("\n✓ Suppression d'une chanson existante réussie.")
 
-    def test_del_chanson_non_existante(self, service, playlist_pleine, chanson_c=MockChanson(id=3)):
+    def test_del_chanson_non_existante(self, service, playlist_pleine, chanson_c):
         """Test la suppression d'une chanson qui n'est pas dans la playlist (ne devrait rien faire)."""
 
         # État initial: [chanson_a, chanson_b]
@@ -133,4 +126,7 @@ class TestPlaylistService:
 
         # Aucune erreur, taille inchangée
         assert len(playlist_vide.chansons) == 0
+        print("\n✓ Suppression sur playlist vide gérée.")
+        assert len(playlist_vide.chansons) == 0
+        print("\n✓ Suppression sur playlist vide gérée.")
         print("\n✓ Suppression sur playlist vide gérée.")
