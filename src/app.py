@@ -169,13 +169,13 @@ async def get_all_playlists():
         raise HTTPException(status_code=500, detail="Erreur interne.")
 
 
-@app.get("/playlists/{id_playlist}", response_model=PlaylistModel, tags=["Playlists"])
-async def get_playlist_by_id(id_playlist: int):
+@app.get("/playlists/{nom}", response_model=PlaylistModel, tags=["Playlists"])
+async def get_playlist_by_nom(nom: str):
     """
     Récupère une playlist spécifique par son ID via le client.
     """
     try:
-        playlist = playlist_client.get_playlist(id_playlist) 
+        playlist = playlist_client.get_playlist(nom) 
         if not playlist:
             raise HTTPException(status_code=404, detail="Playlist introuvable.")
         return playlist
@@ -225,7 +225,7 @@ async def add_chanson_from_api(chanson_data: NewChansonInput):
     Création complète d'une chanson via le Client.
     """
     try:
-        chanson_complete = chanson_client.add_new_chanson(
+        chanson_complete = ChansonClient.add_new_chanson(
             titre=chanson_data.titre,
             artiste=chanson_data.artiste
         )

@@ -3,20 +3,19 @@ from InquirerPy import prompt
 from view.abstract_view import AbstractView
 
 
-class StartView(AbstractView):
+class PlaylistCatalogView(AbstractView):
     def __init__(self):
+        playlists = requests.get("http://127.0.0.1:8000/playlists")
+        list_playlist= ["Quitter"]
+        for playlist in playlists:
+            list_playlist.append(playlist.nom)
+
         self.__questions = [
             {
-                "type": "list",
-                "name": "choix",
-                "message": f"Bonjour, que voulez vous faire ?",
-                "choices": [
-                    "Ajouter une musique",
-                    "Créer une playlist",
-                    "Catalogue de musiques",
-                    "Catalogue de playlists",
-                    "Quitter",
-                ],
+            "type": "list",  # Liste déroulante avec options
+            "message": "Playlist disponible :",
+            "name": "playlist",  # Nom de la réponse
+            "choices": list_playlist  # Options disponibles
             }
         ]
 
@@ -28,23 +27,6 @@ class StartView(AbstractView):
         reponse = prompt(self.__questions)
         if reponse["choix"] == "Quitter":
             pass
-
-        elif reponse["choix"] == "Ajouter une musique":
-            from view.connection_view import ConnectionView
-
-            return ConnectionView()
-
-        elif reponse["choix"] == "Créer une playlist":
-            from view.battle_view import BattleView
-
-            return BattleView()
-
-        elif reponse["choix"] == "Catalogue de musiques":
-            from view.pokemon_list_view import PokemonListView
-
-            return PokemonListView()
-
-        elif reponse["choix"] == "Catalogue de playlists":
-            from view.attack_list_view import AttackListView
-
-            return AttackListView()
+        else: 
+            responses = requests.get("http://127.0.0.1:8000/playlists", json=responses)
+            print()
