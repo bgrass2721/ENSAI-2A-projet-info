@@ -225,7 +225,7 @@ async def add_chanson_from_api(chanson_data: NewChansonInput):
     Création complète d'une chanson via le Client.
     """
     try:
-        chanson_complete = chanson_client.add_new_chanson(
+        chanson_complete = ChansonClient.add_new_chanson(
             titre=chanson_data.titre,
             artiste=chanson_data.artiste
         )
