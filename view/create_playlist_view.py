@@ -28,11 +28,11 @@ class CreatePlaylistView(AbstractView):
 
     def make_choice(self):
         reponses = prompt(self.__questions)
-        response = requests.post("http://127.0.0.1:8000/playlists", json=responses)
+        response = requests.get("http://127.0.0.1:8000/playlists/{nom}", params=responses)
         if response.status_code == 500:
             print("Je sais pas pourquoi ca voudrait pas (faudra qu'on regarde)")
         else:
-            print("La playlist est créée!")
+            print(response)
 
         from view.start_view import StartView
         return StartView()
