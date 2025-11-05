@@ -94,7 +94,7 @@ class DAO_chanson(DAO):
                     chanson = Chanson(titre, artiste, annee, paroles)
                     return chanson
 
-    def _del_chanson_via_embed_paroles(self, embed_paroles: list[float]) -> bool:
+    def _del_chanson_via_titre_artiste(self, titre: str, artiste: str) -> bool:
         """
         Supprime une chanson de la table CHANSON via l'embedding pour l'identifier
         """
@@ -103,9 +103,10 @@ class DAO_chanson(DAO):
                 cursor.execute(
                     """
                     DELETE FROM CHANSON
-                    WHERE embed_paroles::text = %s::text;
+                    WHERE titre = %s
+                    AND artiste = %s;
                     """,
-                    (embed_paroles,),
+                    (titre, artiste),
                 )
                 modif = cursor.rowcount
             if modif == 1:
