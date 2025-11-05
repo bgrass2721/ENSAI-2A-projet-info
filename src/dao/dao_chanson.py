@@ -13,12 +13,13 @@ class DAO_chanson(DAO):
         titre = chanson.titre
         artiste = chanson.artiste
         annee = chanson.annee
+        str_paroles = chanson.paroles.content
         with DBConnection().connection as connection:
             with connection.cursor() as cursor:
                 cursor.execute(
                     """
-                    INSERT INTO CHANSON (embed_paroles, titre, artiste, annee)
-                    VALUES (%(embed_paroles)s, %(titre)s, %(artiste)s, %(annee)s)
+                    INSERT INTO CHANSON (embed_paroles, titre, artiste, annee, str_paroles)
+                    VALUES (%(embed_paroles)s, %(titre)s, %(artiste)s, %(annee)s, %(str_paroles)s)
                     ON CONFLICT DO NOTHING;
                     """,
                     # ON CONFLICT évite d'enregistrer deux fois une chanson
@@ -27,6 +28,7 @@ class DAO_chanson(DAO):
                         "titre": titre,
                         "artiste": artiste,
                         "annee": annee,
+                        "str_paroles": str_paroles,
                     },
                 )
                 connection.commit()

@@ -44,10 +44,10 @@ class DAO(ABC):
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(f"DELETE FROM {nom_table.upper()};")
-            connection.commit()
-        if isinstance(nom_table, None):
+                connection.commit()
+        if nom_table is None:
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
                     for nom_table in ordre:
                         cursor.execute(f"DELETE FROM {nom_table};")
-            connection.commit()
+                connection.commit()
