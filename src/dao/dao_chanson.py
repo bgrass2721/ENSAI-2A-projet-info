@@ -86,7 +86,7 @@ class DAO_chanson(DAO):
                     (embed_paroles,),
                 )
                 modif = cursor.rowcount
-            connection.commit()
-        if modif == 1:
-            return True
+            if modif == 1:
+                connection.commit()
+                return True
         return False
