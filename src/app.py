@@ -50,9 +50,8 @@ class PlaylistModel(BaseModel):
 
 class PlaylistCreationModel(BaseModel):
     """Modèle d'entrée pour la création d'une playlist."""
-    nom: str
-    keyword: str
-    nbsongs: int
+    nom: str          # Mot-clé qui servira aussi de nom de playlist
+    nbsongs: int      # Nombre de chansons souhaitées
 
 
 class NewChansonInput(BaseModel):
@@ -84,17 +83,41 @@ async def redirect_to_docs():
 @app.post("/playlists", response_model=PlaylistModel, tags=["Playlists"])
 async def create_playlist(data: PlaylistCreationModel):
     """
-    Crée une playlist en appelant le client.
+    Crée une playlist à partir d'un mot-clé et d'un nombre de chansons.
+    Le nom de la playlist est généré automatiquement.
     """
     try:
+        # Validation des entrées
+        if data.nbsongs <= 0 or data.nbsongs > 50:  # Limite raisonnable
+            raise HTTPException(
+                status_code=400, 
+                detail="Le nombre de chansons doit être entre 1 et 50"
+            )
+        
+        if len(data.keyword.strip()) < 2:
+            raise HTTPException(
+                status_code=400,
+                detail="Le mot-clé doit contenir au moins 2 caractères"
+            )
+        
+        # Appel du client avec seulement 2 paramètres
         nouvelle_playlist = playlist_client.request_playlist(
-            nom=data.nom,
             keyword=data.keyword,
             nbsongs=data.nbsongs
         )
+        
+        if not nouvelle_playlist:
+            raise HTTPException(
+                status_code=500,
+                detail="La création de la playlist a échoué"
+            )
+            
         return nouvelle_playlist
+        
+    except HTTPException:
+        raise
     except Exception as e:
-        logging.error(f"Erreur lors de la création de la playlist via client : {e}")
+        logging.error(f"Erreur lors de la création de la playlist : {e}")
         raise HTTPException(status_code=500, detail=f"Erreur interne: {e}")
 
 
@@ -161,7 +184,7 @@ async def get_all_chansons():
         raise HTTPException(status_code=500, detail="Erreur interne.")
 
 
-@app.post("/chansons/", response_model=ChansonModel, status_code=201, summary="Ajoute une chanson (récupération auto des paroles).")
+@app.post("/chansons/", response_model=ChansonModel, summary="Ajoute une chanson (récupération auto des paroles).")
 async def add_chanson_from_api(chanson_data: NewChansonInput):
     """
     Création complète d'une chanson via le Client.
@@ -169,8 +192,7 @@ async def add_chanson_from_api(chanson_data: NewChansonInput):
     try:
         chanson_complete = chanson_client.add_new_chanson(
             titre=chanson_data.titre,
-            artiste=chanson_data.artiste,
-            annee=chanson_data.annee
+            artiste=chanson_data.artiste
         )
         return chanson_complete
         
