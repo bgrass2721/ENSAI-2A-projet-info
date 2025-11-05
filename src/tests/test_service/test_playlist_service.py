@@ -1,8 +1,8 @@
-from unittest.mock import patch
-
 import pytest
 
+from business_object.paroles import Paroles
 from business_object.playlist import Playlist
+from dao.dao_paroles import DAO_paroles
 from service.chanson_service import ChansonService
 from service.playlist_service import PlaylistService
 
@@ -45,9 +45,11 @@ class TestPlaylistService:
         return Playlist(1, "vide", [chanson_a, chanson_b])
 
     ### 1. Tests de `instantiate_playlist`
+    def test_instantiate_playlist(self, service, keyword):
+        playlist = service.instantiate_playlist(keyword, 3)
 
-    # def test_instantiate_playlist(self, service, keyword, chanson_a, chanson_b, chanson_c):
-        
+        assert isinstance(playlist, Playlist)
+        assert len(playlist.chansons) == 3
 
     ### 2. Tests de `add_chanson`
 
