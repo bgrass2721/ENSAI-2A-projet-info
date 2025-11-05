@@ -106,9 +106,9 @@ class DAO_playlist(DAO):
 
     def del_playlist_via_id(self, id_playlist: int) -> None:
         """
-        Supprime une playlist de la table PLAYLIST via son nom.
+        Supprime une playlist de la table PLAYLIST via son id
         Les lignes associées dans CATALOGUE sont supprimées
-        automatiquement grace au ON DELETE CASCADE
+        automatiquement grâce au ON DELETE CASCADE
         """
         with DBConnection().connection as connection:
             with connection.cursor() as cursor:
