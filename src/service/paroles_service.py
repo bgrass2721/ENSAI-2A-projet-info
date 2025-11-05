@@ -1,8 +1,9 @@
-from business_object.chanson import Chanson
 import requests
 
-class ParolesService():
+from business_object.chanson import Chanson
 
+
+class ParolesService:
     def add_from_API(chanson: Chanson):
         """
         Recherche les paroles d'une chanson via LRCLIB à partir du titre et de l'artiste.
@@ -12,10 +13,7 @@ class ParolesService():
         url = "https://lrclib.net/api/get"
 
         # Paramètres de la requête
-        params = {
-            "track_name": chanson.titre,
-            "artist_name": chanson.artiste
-        }
+        params = {"track_name": chanson.titre, "artist_name": chanson.artiste}
 
         try:
             response = requests.get(url, params=params, timeout=10)

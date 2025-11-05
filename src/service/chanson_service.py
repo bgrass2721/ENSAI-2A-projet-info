@@ -2,27 +2,27 @@ import requests
 
 from business_object.chanson import Chanson
 from business_object.paroles import Paroles
-from service.embedding_service import vectorise
-from service.parole_service import add_from_API
+from service.embedding_service import EmbeddingService
+from service.paroles_service import ParolesService
 
 
-class chanson_service:
-    def instantiate_chanson(titre: str, artiste: str, annee: int = None) -> Chanson:
+class ChansonService:
+    def instantiate_chanson(self, titre: str, artiste: str) -> Chanson:
         """
         Création de l'objet Chanson
         """
         chanson = Chanson(titre, artiste)
         return chanson
 
-    def add_chanson_paroles(chanson: Chanson) -> None:
+    def add_chanson_paroles(self, chanson: Chanson) -> None:
         """
         Ajout du vec paroles
         """
-        paroles_str = add_from_API(chanson)
-        paroles_vecteur = vectorise(paroles_str)
+        paroles_str = ParolesService.add_from_API(chanson)
+        paroles_vecteur = EmbeddingService.vectorise(paroles_str)
         chanson.paroles = Paroles(content=paroles_str, vecteur=paroles_vecteur)
 
-    def add_annee(chanson: Chanson):
+    def add_annee(self, chanson: Chanson):
         """
         Recherche l'année de sortie d'une chanson via LRCLIB à partir du titre et de l'artiste.
         Retourne l'année si trouvée, sinon None.
