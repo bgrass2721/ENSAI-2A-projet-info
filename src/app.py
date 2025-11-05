@@ -161,7 +161,7 @@ async def get_all_chansons():
         raise HTTPException(status_code=500, detail="Erreur interne.")
 
 
-@app.post("/chansons/", response_model=ChansonModel, status_code=201, summary="Ajoute une chanson (récupération auto des paroles).")
+@app.post("/chansons/", response_model=ChansonModel, summary="Ajoute une chanson (récupération auto des paroles).")
 async def add_chanson_from_api(chanson_data: NewChansonInput):
     """
     Création complète d'une chanson via le Client.
@@ -169,8 +169,7 @@ async def add_chanson_from_api(chanson_data: NewChansonInput):
     try:
         chanson_complete = chanson_client.add_new_chanson(
             titre=chanson_data.titre,
-            artiste=chanson_data.artiste,
-            annee=chanson_data.annee
+            artiste=chanson_data.artiste
         )
         return chanson_complete
         
