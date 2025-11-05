@@ -28,7 +28,7 @@ class DAO_chanson(DAO):
                 )
                 connection.commit()
 
-    def get_chansons(self) -> list[Chanson]:
+    def get_chansons(self) -> list[Chanson] | None:
         """
         Liste l'objet Chanson de toutes les chansons enregistrées dans la BD
         """
@@ -45,7 +45,7 @@ class DAO_chanson(DAO):
                         paroles = Paroles(content=content, vecteur=vecteur)
                         chanson = Chanson(titre, artiste, annee, paroles)
                         list_Chansons.append(chanson)
-        return list_Chansons
+                return list_Chansons
 
     def get_chanson_from_embed_paroles(self, embed_paroles: list[float]) -> Chanson | None:
         # id = embed_paroles
@@ -55,7 +55,7 @@ class DAO_chanson(DAO):
                     """
                     SELECT titre, artiste, annee, str_paroles
                     FROM CHANSON
-                    WHERE embed_paroles = %s;
+                    WHERE embed_paroles::text = %s::text;
                     """,
                     (embed_paroles,),
                 )  # (tire, artiste, annee, str_paroles)
@@ -64,9 +64,8 @@ class DAO_chanson(DAO):
                     titre, artiste, annee, str_paroles = res
                     paroles = Paroles(content=str_paroles, vecteur=embed_paroles)
                     return Chanson(titre, artiste, annee, paroles)
-        return None
 
-    def _del_chanson_via_embed_paroles(self, embed_paroles: list[float]) -> None:
+    def _del_chanson_via_embed_paroles(self, embed_paroles: list[float]) -> bool:
         """
         Supprime une chanson de la table CHANSON, soit via l'embedding de ses paroles
         """
@@ -75,8 +74,12 @@ class DAO_chanson(DAO):
                 cursor.execute(
                     """
                     DELETE FROM CHANSON
-                    WHERE embed_paroles = %s;
+                    WHERE embed_paroles::text = %s::text;
                     """,
                     (embed_paroles,),
                 )
+                suppr = cursor.rowcount
             connection.commit()
+            if suppr == 1:  # embed_paroles est un attribut unique
+                return True
+        return False

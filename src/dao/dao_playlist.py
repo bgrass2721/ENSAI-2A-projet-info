@@ -20,9 +20,9 @@ class DAO_playlist(DAO):
                     RETURNING id_playlist;
                     """,
                     (playlist.nom,),
-                )  # (id_playlist, ) 
+                )  # (id_playlist, )
                 res = cursor.fetchone()
-                if res: # si une playlist porte déjà le même nom : retourne None
+                if res:  # si une playlist porte déjà le même nom : retourne None
                     id_playlist = res[0]
                     chansons = playlist.chansons
                     for chanson in chansons:
@@ -35,7 +35,7 @@ class DAO_playlist(DAO):
                             WHERE embed_paroles::text = %s::text;
                             """,
                             (embed_paroles,),
-                        )  # (id_chanson, ) 
+                        )  # (id_chanson, )
                         res = cursor.fetchone()
                         if res:
                             id_chanson = res[0]
@@ -116,9 +116,8 @@ class DAO_playlist(DAO):
                 nom = res[0][0]
                 playlist = Playlist(nom, chansons)
                 return playlist
-        return None
 
-    def _del_playlist_via_id(self, id_playlist: int) -> None:
+    def _del_playlist_via_id(self, id_playlist: int) -> bool:
         """
         Supprime une playlist de la table PLAYLIST via son id
         Les lignes associées dans CATALOGUE sont supprimées
@@ -133,4 +132,8 @@ class DAO_playlist(DAO):
                     """,
                     (id_playlist,),
                 )
+                suppr = cursor.rowcount
             connection.commit()
+            if suppr == 1:  # id_playlist est un attribut unique
+                return True
+        return False
