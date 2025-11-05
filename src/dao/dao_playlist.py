@@ -59,7 +59,7 @@ class DAO_playlist(DAO):
                         WHERE cat.id_playlist = %s;
                         """,
                         (id_playlist,),
-                    )  # [(embed_paroles, titre, artiste, annee, str_paroles), (...), ...]
+                    )  # [(nom, embed_paroles, titre, artiste, annee, str_paroles), (...), ...]
                     tup_chansons = cursor.fetchall()
                     chansons = []
                     for embed_paroles, titre, artiste, annee, str_paroles in tup_chansons:
