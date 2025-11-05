@@ -18,7 +18,8 @@ class DAO_playlist(DAO):
                     """
                     INSERT INTO PLAYLIST (nom)
                     VALUES (%s)
-                    RETURNING id_playlist;
+                    RETURNING id_playlist
+                    ON CONFLICT DO NOTHING;
                     """,
                     (nom,),
                 )
@@ -41,73 +42,73 @@ class DAO_playlist(DAO):
         playlists = []
         with DBConnection().connection as connection:
             with connection.cursor() as cursor:
-                # récupération de l'identifiant de chaque playlist
+                # Récupération de l'identifiant et du nom de chaque playlist
                 cursor.execute(
                     """
                     SELECT id_playlist, nom from PLAYLIST;
                     """
                 )  # [(id, nom), (id, nom), ...]
-                tup_playlists = cursor.fetchall()  # [(id, nom), (id, nom), ...]
-                # récupération des chansons de chaque playlist
+                tup_playlists = cursor.fetchall()
                 for id_playlist, nom in tup_playlists:
+                    # Récupération des chansons de chaque playlist
                     cursor.execute(
                         """
-                        SELECT cat.nom, c.embed_paroles, c.titre, c.artiste, c.annee, c.str_paroles
+                        SELECT c.embed_paroles, c.titre, c.artiste, c.annee, c.str_paroles
                         FROM CHANSON c
                         JOIN CATALOGUE cat ON c.embed_paroles = cat.embed_paroles
                         WHERE cat.id_playlist = %s;
                         """,
                         (id_playlist,),
-                    )
+                    )  # [(embed_paroles, titre, artiste, annee, str_paroles), (...), ...]
                     tup_chansons = cursor.fetchall()
-                    # création liste d'objets Chanson
                     chansons = []
                     for embed_paroles, titre, artiste, annee, str_paroles in tup_chansons:
                         paroles = Paroles(content=str_paroles, vecteur=embed_paroles)
+                        # Création objet Chanson
                         chanson = Chanson(titre, artiste, annee, paroles)
+                        # Ajout de la chanson à liste de chansons
                         chansons.append(chanson)
-                    # création objet Playlist
+                    # Création objet Playlist
                     playlist = Playlist(nom, chansons)
-                    # ajout de la playlist à la liste des playlists
+                    # Ajout de la playlist à la liste des playlists
                     playlists.append(playlist)
             return playlists
 
-    def get_playlist_from_id(self, id: int) -> Playlist | None:
+    def get_playlist_from_id(self, id_playlist: int) -> Playlist | None:
         """
         Liste tous les objets Playlist des playlists enregistrés dans la BD
         """
-        playlists = []
         with DBConnection().connection as connection:
             with connection.cursor() as cursor:
-                # récupération de l'identifiant de chaque playlist
+                # Récupération nom de chaque playlist
                 cursor.execute(
                     """
-                    SELECT id_playlist, nom from PLAYLIST
+                    SELECT DISTINCT nom from PLAYLIST
                     WHERE id_playlist = %s;
                     """,
-                    (id,),
-                )  # [(id, nom), (id, nom), ...] avec toujours le même id
-                tup_playlists = cursor.fetchall()
-                # récupération des chansons de chaque playlist
-                for id_playlist, nom in tup_playlists:
+                    (id_playlist,),
+                )  # [(nom)]
+                nom = cursor.fetchone()
+                if nom:
+                    # Récupération des chansons de la playlist
                     cursor.execute(
                         """
-                        SELECT cat.nom, c.embed_paroles, c.titre, c.artiste, c.annee, c.str_paroles
+                        SELECT c.embed_paroles, c.titre, c.artiste, c.annee, c.str_paroles
                         FROM CHANSON c
                         JOIN CATALOGUE cat ON c.embed_paroles = cat.embed_paroles
                         WHERE cat.id_playlist = %s;
                         """,
                         (id_playlist,),
-                    )
-                    tup_chansons = cursor.fetchall()
-                    # création liste d'objets Chanson
+                    )  # [(embed_paroles, titre, artiste, annee, str_paroles), (...), ...]
+                    res = cursor.fetchall()
                     chansons = []
-                    for embed_paroles, titre, artiste, annee, str_paroles in tup_chansons:
+                    for embed_paroles, titre, artiste, annee, str_paroles in res:
                         paroles = Paroles(content=str_paroles, vecteur=embed_paroles)
+                        # Création objet Chanson
                         chanson = Chanson(titre, artiste, annee, paroles)
+                        # Ajout de la chanson à liste de chansons
                         chansons.append(chanson)
-                    # création objet Playlist
-                    playlist = Playlist(nom, chansons)
-                    # ajout de la playlist à la liste des playlists
-                    playlists.append(playlist)
-            return playlists
+                        # Création objet Playlist
+                        playlist = Playlist(nom, chansons)
+                        return playlist
+                return None
