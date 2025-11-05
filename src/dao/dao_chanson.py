@@ -74,7 +74,7 @@ class DAO_chanson(DAO):
 
     def get_chanson_from_titre_artiste(self, titre: str, artiste: str) -> Chanson | None:
         """
-        Récupère un object Chanson via l'embedding de paroles
+        Récupère une Chanson via l'embedding de paroles
         """
         with DBConnection().connection as connection:
             with connection.cursor() as cursor:
