@@ -29,7 +29,7 @@ class PlaylistClient:
         """
         return DAO_playlist().get_playlists()
 
-    def get_playlist(self, id):
+    def get_playlist(self, nom):
         """
         Récupère une playlist à partir de son id
 
@@ -43,7 +43,7 @@ class PlaylistClient:
         Playlist
             un objet playlist
         """
-        return DAO_playlist().get_playlist_from_id(id)
+        return DAO_playlist().get_playlist_from_nom(nom)
 
     def get_playlist_chansons(self, id):
         """
