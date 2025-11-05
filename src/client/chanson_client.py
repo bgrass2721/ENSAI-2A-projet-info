@@ -1,5 +1,6 @@
 from business_object.paroles import Paroles
 from dao.dao import DAO
+from dao.dao_chanson import DAO_chanson
 from service.chanson_service import ChansonService
 from service.paroles_service import ParolesService
 
@@ -27,13 +28,13 @@ class ChansonClient:
         str
             Message de validation / d'erreur
         """
-        new_chanson = ChansonService.instantiate_chanson(titre, artiste)
+        new_chanson = ChansonService().instantiate_chanson(titre, artiste)
         try:
-            ChansonService.add_annee(new_chanson)
-            ChansonService.add_chanson_paroles(new_chanson)
+            ChansonService().add_annee(new_chanson)
+            ChansonService().add_chanson_paroles(new_chanson)
         except:
             return "La chanson n'est pas trouvable sur l'API"
-        DAO.add_chanson(new_chanson)
+        DAO_chanson().add_chanson(new_chanson)
 
     def get_chansons(self):
         """
@@ -44,7 +45,7 @@ class ChansonClient:
         list[Chanson]
             une liste de chansons
         """
-        return DAO.get_chansons()
+        return DAO_chanson().get_chansons()
 
     def get_chanson(self, id):
         """
@@ -60,22 +61,7 @@ class ChansonClient:
         Chanson
             un objet chanson
         """
-        return DAO.get_chanson_from_id(id)
-
-    def add_chanson_paroles(self, chanson, paroles_content):
-        """
-        Permet d'ajouter manuellement les paroles d'une chanson
-        Peut permettre aussi de modifier le contenu des paroles d'une chanson
-        Remplace l'attribut paroles de chanson par un objet Paroles
-
-        Parameters
-        ----------
-        chanson : Chanson
-            l'objet chanson à modifier
-        paroles_content : str
-            le contenu des paroles
-        """
-        chanson.paroles = Paroles(paroles_content)
+        return DAO_chanson().get_chanson_from_id(id)
 
     def get_chanson_paroles(self, chanson):
         """
@@ -87,4 +73,4 @@ class ChansonClient:
         chanson : Chanson
             l'objet chanson à modifier
         """
-        chanson.paroles = ParolesService.add_from_api(chanson)
+        chanson.paroles = ParolesService().add_from_api(chanson)

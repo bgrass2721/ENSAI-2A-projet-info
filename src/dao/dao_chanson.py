@@ -26,7 +26,11 @@ class DAO_chanson(DAO):
                         "str_paroles": chanson.paroles.content,
                     },
                 )
+                modif = cursor.rowcount
             connection.commit()
+        if modif == 1:
+            return True
+        return
 
     def get_chansons(self) -> list[Chanson] | None:
         """
@@ -46,7 +50,6 @@ class DAO_chanson(DAO):
                         chanson = Chanson(titre, artiste, annee, paroles)
                         list_Chansons.append(chanson)
                     return list_Chansons
-        return None
 
     def get_chanson_from_embed_paroles(self, embed_paroles: list[float]) -> Chanson | None:
         """
@@ -68,9 +71,8 @@ class DAO_chanson(DAO):
                     paroles = Paroles(content=str_paroles, vecteur=embed_paroles)
                     chanson = Chanson(titre, artiste, annee, paroles)
                     return chanson
-        return None
 
-    def del_chanson_via_embed_paroles(self, embed_paroles: list[float]) -> None:
+    def _del_chanson_via_embed_paroles(self, embed_paroles: list[float]) -> bool:
         """
         Supprime une chanson de la table CHANSON via l'embedding pour l'identifier
         """
@@ -83,4 +85,8 @@ class DAO_chanson(DAO):
                     """,
                     (embed_paroles,),
                 )
+                modif = cursor.rowcount
             connection.commit()
+        if modif == 1:
+            return True
+        return False

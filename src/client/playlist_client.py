@@ -1,4 +1,5 @@
 from dao.dao import DAO
+from dao.dao_playlist import DAO_playlist
 from service.playlist_service import PlaylistService
 
 
@@ -12,12 +13,9 @@ class PlaylistClient:
         """
         Fait appel à la fonction instantiate_playlist du service layer pour créer une nouvelle
         playlist à partir d'un mot-clé et d'un nombre de chansons.
-
-
         """
-        # Nouvelle playlist
         new_playlist = PlaylistService.instantiate_playlist(keyword, nbsongs)
-        DAO.add_playlist(new_playlist)
+        DAO_playlist().add_playlist(new_playlist)
         return new_playlist
 
     def get_playlists(self):
@@ -29,7 +27,7 @@ class PlaylistClient:
         list[Playlist]
             une liste de playlists
         """
-        return DAO.get_playlists()
+        return DAO_playlist().get_playlists()
 
     def get_playlist(self, id):
         """
@@ -45,7 +43,7 @@ class PlaylistClient:
         Playlist
             un objet playlist
         """
-        return DAO.get_playlist_from_id(id)
+        return DAO_playlist().get_playlist_from_id(id)
 
     def get_playlist_chansons(self, id):
         """
@@ -61,5 +59,5 @@ class PlaylistClient:
         list[Chanson]
             une liste d'objets chansons
         """
-        playlist = self.get_playlist_from_id(id)
+        playlist = DAO_playlist().get_playlist_from_id(id)
         return playlist.get_chansons
