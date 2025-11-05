@@ -4,7 +4,7 @@ from dao.db_connection import DBConnection
 
 
 class DAO_paroles(DAO):
-    def get_paroles(self) -> list[Paroles]:
+    def get_paroles(self) -> list[Paroles] | None:
         """
         Liste les Paroles de toutes les chansons enregistrées dans la BD
         """
@@ -21,4 +21,3 @@ class DAO_paroles(DAO):
                         paroles = Paroles(content=str_paroles, vecteur=embed_paroles)
                         list_Paroles.append(paroles)
                     return list_Paroles
-        return None
