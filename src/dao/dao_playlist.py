@@ -81,7 +81,18 @@ class DAO_playlist(DAO):
                     # GROUP BY id_playlist
                     # 0 car id_playlist est le premier élément de chaque tuple
                     # groupby ne marche pas avec une liste de dicos
-                    list_tup = tuple(res.values())
+                    list_tup = [
+                        (
+                            chanson["id_playlist"],
+                            chanson["nom"],
+                            chanson["titre"],
+                            chanson["artiste"],
+                            chanson["annee"],
+                            chanson["embed_paroles"],
+                            chanson["str_paroles"],
+                        )
+                        for chanson in res
+                    ]
                     for id_playlist, group in groupby(list_tup, key=itemgetter(0)):
                         group = list(group)
                         # [(id_playlist, nom, titre, artiste, annee, embed_paroles, str_paroles),
@@ -136,7 +147,7 @@ class DAO_playlist(DAO):
                     playlist = Playlist(nom, chansons)
                     return playlist
 
-    def _del_playlist_via_nom(self, nom: int) -> bool:
+    def _del_playlist_via_nom(self, nom: str) -> bool:
         """
         Supprime une playlist de la table PLAYLIST via son id
         Les lignes associées dans CATALOGUE sont supprimées
