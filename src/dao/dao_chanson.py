@@ -75,9 +75,13 @@ class DAO_chanson(DAO):
                 )  # (tire, artiste, annee, embed_paroles, str_paroles)
                 res = cursor.fetchone()
                 if res:
-                    titre, artiste, annee, embed_paroles, str_paroles = res
-                    paroles = Paroles(content=str_paroles, vecteur=embed_paroles)
-                    chanson = Chanson(titre, artiste, annee, paroles)
+                    paroles = Paroles(content=res["str_paroles"], vecteur=res["embed_paroles"])
+                    chanson = Chanson(
+                        titre=res["titre"],
+                        artiste=res["artiste"],
+                        annee=res["annee"],
+                        paroles=paroles,
+                    )
                     return chanson
 
     def get_chanson_from_titre_artiste(self, titre: str, artiste: str) -> Chanson | None:
@@ -97,9 +101,13 @@ class DAO_chanson(DAO):
                 )  # (tire, artiste, annee, embed_paroles, str_paroles)
                 res = cursor.fetchone()
                 if res:
-                    titre, artiste, annee, embed_paroles, str_paroles = res
-                    paroles = Paroles(content=str_paroles, vecteur=embed_paroles)
-                    chanson = Chanson(titre, artiste, annee, paroles)
+                    paroles = Paroles(content=res["str_paroles"], vecteur=res["embed_paroles"])
+                    chanson = Chanson(
+                        titre=res["titre"],
+                        artiste=res["artiste"],
+                        annee=res["annee"],
+                        paroles=paroles,
+                    )
                     return chanson
 
     def _del_chanson_via_titre_artiste(self, titre: str, artiste: str) -> bool:
