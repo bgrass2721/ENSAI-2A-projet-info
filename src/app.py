@@ -39,7 +39,7 @@ class ChansonModel(BaseModel):
 class PlaylistModel(BaseModel):
     """Modèle de représentation d’une playlist."""
 
-    id_playlist: Optional[int]
+    #id_playlist: Optional[int]
     nom: str
     chansons: Optional[List[ChansonModel]]
 

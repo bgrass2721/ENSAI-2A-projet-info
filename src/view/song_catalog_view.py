@@ -6,11 +6,11 @@ from view.abstract_view import AbstractView
 
 class SongCatalogArtist(AbstractView):
     def __init__(self):
-        allsongs = requests.get("http://0.0.0.0:5000/chansons/")
+        allsongs = requests.get("http://0.0.0.0:5000/chansons/").json()
         songs = ["Quitter"]
         for song in allsongs:
-            if song.artiste not in songs:
-                songs.append(song.artiste)
+            if song["artiste"] not in songs:
+                songs.append(song["artiste"])
 
         self.__questions = [
             {
@@ -34,19 +34,19 @@ class SongCatalogArtist(AbstractView):
             return StartView()
 
         else:
-            return SongCatalogArtist(reponse["artiste"])
+            return SongCatalogTitle(reponse["artiste"])
 
 
 class SongCatalogTitle(AbstractView):
     def __init__(self, artiste):
         self.__artiste = artiste
-        allsongs = requests.get("http://0.0.0.0:5000/chansons/")
+        allsongs = requests.get("http://0.0.0.0:5000/chansons/").json()
         songs = ["Quitter"]
         for song in allsongs:
-            if song.artiste == artiste:
-                songs.append(song.titre)
+            if song["artiste"] == artiste:
+                songs.append(song["titre"])
 
-        __questions = [
+        self.__questions = [
             {
                 "type": "list",  # Liste déroulante avec options
                 "message": "Titres des musiques",
@@ -68,17 +68,17 @@ class SongCatalogTitle(AbstractView):
             return StartView()
 
         else:
-            return SongCatalogSong(self.artiste, reponse["artiste"])
+            return SongCatalogSong(self.artiste, reponse["titre"])
 
 
 class SongCatalogSong(AbstractView):
     def __init__(self, artiste, titre):
-        __song = requests.get(
+        self.__song = requests.get(
             "http://0.0.0.0:5000/chansons/", params={titre: titre, artiste: artiste}
-        )
+        ).json()
         choice = ["Quitter"]
 
-        __questions = [
+        self.__questions = [
             {
                 "type": "list",  # Liste déroulante avec options
                 "name": "artiste",  # Nom de la réponse
@@ -90,12 +90,12 @@ class SongCatalogSong(AbstractView):
         with open("src/graphical_assets/banner.txt", "r", encoding="utf-8") as asset:
             print(asset.read())
         print(f"""
-        Titre: {self.song.titre}
+        Titre: {self.song["titre"]}
         
-        Artiste: {self.song.artiste}
+        Artiste: {self.song["artiste"]}
 
         Paroles:
-        {self.song.paroles.content}
+        {self.song["paroles"]["content"]}
         """)
 
     def make_choice(self):
