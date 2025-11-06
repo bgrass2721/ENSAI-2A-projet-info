@@ -27,7 +27,7 @@ class ChansonClient:
         """
         new_chanson = ChansonService().instantiate_chanson(titre, artiste)
         try:
-            ChansonService().add_annee(new_chanson)
+            # ChansonService().add_annee(new_chanson)
             ChansonService().add_chanson_paroles(new_chanson)
         except:
             return "La chanson n'est pas trouvable sur l'API"

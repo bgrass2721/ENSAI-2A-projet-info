@@ -127,7 +127,7 @@ async def create_playlist(data: PlaylistCreationModel):
             chanson_model = ChansonModel(
                 titre=chanson.titre,
                 artiste=chanson.artiste,
-                annee=chanson.annee,
+                # annee=chanson.annee,
                 paroles=paroles_model,
             )
             chansons_model.append(chanson_model)
