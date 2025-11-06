@@ -1,7 +1,7 @@
 import logging
 from typing import List, Optional
 
-from fastapi import FastAPI, HTTPException, Path
+from fastapi import FastAPI, HTTPException
 from fastapi.responses import RedirectResponse
 from pydantic import BaseModel
 
@@ -32,7 +32,7 @@ class ChansonModel(BaseModel):
     titre: str
     artiste: str
     paroles: Optional[ParolesModel]
-
+    année: Optional[int]
     model_config = {"from_attributes": True}
 
 
@@ -219,7 +219,6 @@ async def get_all_chansons():
 
 @app.post(
     "/chansons/",
-    response_model=ChansonModel,
     summary="Ajoute une chanson (récupération auto des paroles).",
 )
 async def add_chanson_from_api(chanson_data: NewChansonInput):
@@ -243,13 +242,16 @@ async def add_chanson_from_api(chanson_data: NewChansonInput):
     summary="Fournit les infos d'une chanson par titre et artiste.",
 )
 async def get_chanson_by_search(
-    titre: str, artiste: str  # NOUVEAUX PARAMETRES
+    titre: str,
+    artiste: str,  # NOUVEAUX PARAMETRES
 ):
     """
     Récupère une chanson spécifique par son titre et artiste via le client.
     """
     try:
-        chanson = chanson_client.get_chanson_by_titre_artiste(titre, artiste) # APPEL CLIENT MODIFIÉ
+        chanson = chanson_client.get_chanson_by_titre_artiste(
+            titre, artiste
+        )  # APPEL CLIENT MODIFIÉ
 
         if not chanson:
             raise HTTPException(
@@ -268,12 +270,12 @@ async def get_chanson_by_search(
     response_model=ParolesContentModel,
     summary="Retourne le texte des paroles d'une chanson.",
 )
-async def get_lyrics_for_song(titre: str, artiste: str): # NOUVEAUX PARAMETRES
+async def get_lyrics_for_song(titre: str, artiste: str):  # NOUVEAUX PARAMETRES
     """
     Récupère le texte des paroles d'une chanson via le client.
     """
     try:
-        paroles = chanson_client.get_lyrics_by_titre_artiste(titre, artiste) # APPEL CLIENT MODIFIÉ
+        paroles = chanson_client.get_lyrics_by_titre_artiste(titre, artiste)  # APPEL CLIENT MODIFIÉ
 
         if not paroles:
             raise HTTPException(
