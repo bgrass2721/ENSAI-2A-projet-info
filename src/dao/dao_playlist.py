@@ -78,10 +78,22 @@ class DAO_playlist(DAO):
                 # (...), ...]
                 res = cursor.fetchall() or None
                 if res:
+                    list_tup = [
+                        (
+                            ligne["id_playlist"],
+                            ligne["nom"],
+                            ligne["titre"],
+                            ligne["artiste"],
+                            ligne["annee"],
+                            ligne["embed_paroles"],
+                            ligne["str_paroles"],
+                        )
+                        for ligne in res
+                    ]
                     # groupby et itemgetter sont natifs de Python
                     # GROUP BY id_playlist
                     # 0 car id_playlist est le premier élément de chaque tuple
-                    for id_playlist, group in groupby(res, key=itemgetter(0)):
+                    for id_playlist, group in groupby(list_tup, key=itemgetter(0)):
                         group = list(group)
                         # [(id_playlist, nom, titre, artiste, annee, embed_paroles, str_paroles),
                         # (...), ...] avec le même id_playlist dans chaque tuple
