@@ -16,9 +16,7 @@ class DAO(ABC):
                     CREATE TABLE IF NOT EXISTS PLAYLIST (
                     id_playlist SERIAL PRIMARY KEY,
                     nom VARCHAR(255) NOT NULL UNIQUE
-                    """)
-                connection.commit()
-                cursor.execute("""
+                    );
                     CREATE TABLE IF NOT EXISTS CHANSON (
                     id_chanson SERIAL PRIMARY KEY, 
                     titre VARCHAR(255) NOT NULL,
@@ -27,9 +25,7 @@ class DAO(ABC):
                     embed_paroles FLOAT8[] NOT NULL,
                     str_paroles TEXT NOT NULL,
                     UNIQUE(titre, artiste)
-                    """)
-                connection.commit()
-                cursor.execute("""
+                    );
                     CREATE TABLE IF NOT EXISTS CATALOGUE (
                     id_playlist INT,
                     id_chanson INT,
@@ -38,7 +34,7 @@ class DAO(ABC):
                     FOREIGN KEY (id_chanson) REFERENCES CHANSON(id_chanson) ON DELETE CASCADE
                     );
                     """)
-                connection.commit()
+            connection.commit()
 
     def _del_data_table(self, nom_table: str | None) -> str | None:
         """
