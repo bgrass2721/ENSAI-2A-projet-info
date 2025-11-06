@@ -9,7 +9,7 @@ class StartView(AbstractView):
             {
                 "type": "list",
                 "name": "choix",
-                "message": f"Bonjour, que voulez vous faire ?",
+                "message": "Bonjour, que voulez vous faire ?",
                 "choices": [
                     "Ajouter une musique",
                     "Créer une playlist",
