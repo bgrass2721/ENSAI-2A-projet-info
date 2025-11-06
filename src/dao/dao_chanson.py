@@ -30,8 +30,8 @@ class DAO_chanson(DAO):
                     },
                 )
                 modif += cursor.rowcount
-            connection.commit()
-            return modif == 1
+                connection.commit()
+        return modif == 1
 
     def get_chansons(self) -> list[Chanson] | None:
         """
@@ -44,7 +44,7 @@ class DAO_chanson(DAO):
                     SELECT titre, artiste, annee, embed_paroles, str_paroles
                     FROM CHANSON;
                     """)  # [(titre, artiste, annee, embed_paroles, str_paroles), (...), ...]
-                res = cursor.fetchall()
+                res = cursor.fetchall() or None
                 if res:  # None traité comme False : la condition n'est pas remplie
                     for titre, artiste, annee, embed_paroles, str_paroles in res:
                         paroles = Paroles(content=str_paroles, vecteur=embed_paroles)
@@ -66,7 +66,7 @@ class DAO_chanson(DAO):
                     """,
                     (embed_paroles,),
                 )  # (tire, artiste, annee, embed_paroles, str_paroles)
-                res = cursor.fetchone()
+                res = cursor.fetchone() 
                 if res:
                     titre, artiste, annee, embed_paroles, str_paroles = res
                     paroles = Paroles(content=str_paroles, vecteur=embed_paroles)
@@ -112,5 +112,5 @@ class DAO_chanson(DAO):
                     (titre, artiste),
                 )
                 modif += cursor.rowcount
-            connection.commit()
-            return modif == 1
+                connection.commit()
+        return modif == 1

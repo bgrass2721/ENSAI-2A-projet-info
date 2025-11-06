@@ -15,7 +15,7 @@ class DAO_paroles(DAO):
                     SELECT embed_paroles, str_paroles 
                     FROM CHANSON;
                     """)  # [(embed_paroles, str_paroles), (embed_paroles, str_paroles), ...]
-                res = cursor.fetchall()
+                res = cursor.fetchall() or None 
                 if res:
                     for embed_paroles, str_paroles in res:
                         paroles = Paroles(content=str_paroles, vecteur=embed_paroles)

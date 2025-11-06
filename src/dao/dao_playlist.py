@@ -13,9 +13,9 @@ class DAO_playlist(DAO):
         """
         Ajoute une playlist à la table PLAYLIST de la BD et remplit la table CATALOGUE de la BD
         """
+        modif = 0
         with DBConnection().connection as connection:
             with connection.cursor() as cursor:
-                modif = 0
                 cursor.execute(
                     """
                     INSERT INTO PLAYLIST (nom)
@@ -43,6 +43,7 @@ class DAO_playlist(DAO):
                         res = cursor.fetchone()
                         if res:
                             id_chanson = res[0]
+
                             cursor.execute(
                                 """
                                 INSERT INTO CATALOGUE (id_playlist, id_chanson)
@@ -50,9 +51,9 @@ class DAO_playlist(DAO):
                                 """,
                                 (id_playlist, id_chanson),
                             )
-                            modif = cursor.rowcount
-            connection.commit()
-            return modif == 1
+                            modif += cursor.rowcount
+                            connection.commit()
+        return modif == 1
 
     def get_playlists(self) -> list[Playlist] | None:
         playlists = []
@@ -74,7 +75,7 @@ class DAO_playlist(DAO):
                 """)
                 # [(id_playlist, nom, titre, artiste, annee, embed_paroles, str_paroles),
                 # (...), ...]
-                res = cursor.fetchall()
+                res = cursor.fetchall() or None
                 if res:
                     # groupby et itemgetter sont natifs de Python
                     # GROUP BY id_playlist
@@ -116,7 +117,7 @@ class DAO_playlist(DAO):
                 )
                 # [(titre, artiste, annee, embed_paroles, str_paroles),
                 # (...), ...]
-                res = cursor.fetchall()
+                res = cursor.fetchall() or None
                 if res:
                     chansons = []
                     for titre, artiste, annee, embed_paroles, str_paroles in res:
@@ -143,5 +144,5 @@ class DAO_playlist(DAO):
                     (nom,),
                 )
                 modif += cursor.rowcount
-            connection.commit()
-            return modif
+                connection.commit()
+        return modif == 1
