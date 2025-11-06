@@ -18,7 +18,7 @@ class CreatePlaylistView(AbstractView):
                 "type": "number",  # Demande une saisie texte
                 "message": " Nombre de musique max : ",
                 "name": "nbsongs",  # Nom de la réponse
-                "validate": lambda result: result > 0
+                "validate": lambda result: int(result) > 0
                 and isinstance(result, int),  # Validation pour ne pas laisser vide
                 "invalid_message": "Le nombre doit être un entier positif.",
             },
