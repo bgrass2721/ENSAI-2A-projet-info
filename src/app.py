@@ -32,7 +32,7 @@ class ChansonModel(BaseModel):
     titre: str
     artiste: str
     paroles: Optional[ParolesModel]
-
+    année: Optional[int]
     model_config = {"from_attributes": True}
 
 

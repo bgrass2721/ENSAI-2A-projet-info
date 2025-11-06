@@ -8,6 +8,7 @@ class DAO(ABC):
         """
         Crée la BD si elle n'est pas créée
         """
+        self.ordre_suppr_table = ["CATALOGUE", "PLAYLIST", "CHANSON"]
         with DBConnection().connection as connection:
             with connection.cursor() as cursor:
                 cursor.execute("""
@@ -41,14 +42,14 @@ class DAO(ABC):
         Si aucune table n'est spécifiée, toutes les tables de la DB sont vidées
         """
         # Ordre logique de suppression pour respecter les contraintes FK
-        ordre = ["CATALOGUE", "PLAYLIST", "CHANSON"]
+
         with DBConnection().connection as connection:
             with connection.cursor() as cursor:
-                if nom_table in ordre:
+                if nom_table in self.ordre_suppr_table:
                     cursor.execute(f"DELETE FROM {nom_table};")
                     return "table vidée"
                 if nom_table is None:
-                    for nom_table in ordre:
+                    for nom_table in self.ordre_suppr_table:
                         cursor.execute(f"DELETE FROM {nom_table};")
                     return "tables vidées"
                 connection.commit()
@@ -59,14 +60,13 @@ class DAO(ABC):
         Supprime la table donnée en argument en majuscule
         Si aucune table n'est spécifiée, toutes les tables de la DB sont supprimées
         """
-        ordre = ["CATALOGUE", "PLAYLIST", "CHANSON"]
         with DBConnection().connection as connection:
             with connection.cursor() as cursor:
-                if nom_table in ordre:
+                if nom_table in self.ordre_suppr_table:
                     cursor.execute(f"DROP TABLE IF EXISTS {nom_table} CASCADE;")
                     return "table supprimée"
                 if nom_table is None:
-                    for table in ordre:
+                    for table in self.ordre_suppr_table:
                         cursor.execute(f"DROP TABLE IF EXISTS {table} CASCADE;")
                     return "tables supprimées"
                 connection.commit()
