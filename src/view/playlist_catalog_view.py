@@ -13,7 +13,7 @@ class PlaylistCatalogView(AbstractView):
         
         try:
             # Récupère la liste de toutes les playlists
-            response = requests.get("http://127.0.0.1:8000/playlists")
+            response = requests.get("http://0.0.0.0:5000/playlists")
             response.raise_for_status() 
             
             playlists_data = response.json()
@@ -71,7 +71,7 @@ class PlaylistDetailView(AbstractView):
         
         try:
             # Appelle l'endpoint pour récupérer les chansons de cette playlist
-            url = f"http://127.0.0.1:8000/playlists/{self.nom_playlist}/songs"
+            url = f"http://0.0.0.0:5000/playlists/{self.nom_playlist}/songs"
             response = requests.get(url)
             response.raise_for_status()
             

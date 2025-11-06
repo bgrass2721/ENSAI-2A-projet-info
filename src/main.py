@@ -26,8 +26,10 @@ if __name__ == "__main__":
             current_view = current_view.make_choice()
         except Exception as e:
             logging.info(e)
+            print(e)
             nb_erreurs += 1
             current_view = StartView()
+            
 
     # Lorsque l on quitte l application
     print("----------------------------------")
