@@ -9,9 +9,11 @@ class DAO_chanson(DAO):
         """
         Ajoute une chanson à la table CHANSON de la BD
         """
-        modif = 0
         with DBConnection().connection as connection:
             with connection.cursor() as cursor:
+                modif = 0
+                # si la requête n'est pas correcte, modif ne serait pas initialisée
+                # correcte si : requête correcte, requête correcte avec valeur dupliquée
                 cursor.execute(
                     """
                     INSERT INTO CHANSON (titre, artiste, annee, embed_paroles, str_paroles)
@@ -27,11 +29,9 @@ class DAO_chanson(DAO):
                         "str_paroles": chanson.paroles.content,
                     },
                 )
-                modif = cursor.rowcount
-            connection.commit()
-        if modif == 1:
-            return True
-        return
+                modif += cursor.rowcount
+                connection.commit()
+        return modif == 1
 
     def get_chansons(self) -> list[Chanson] | None:
         """
@@ -44,7 +44,7 @@ class DAO_chanson(DAO):
                     SELECT titre, artiste, annee, embed_paroles, str_paroles
                     FROM CHANSON;
                     """)  # [(titre, artiste, annee, embed_paroles, str_paroles), (...), ...]
-                res = cursor.fetchall()
+                res = cursor.fetchall() or None
                 if res:  # None traité comme False : la condition n'est pas remplie
                     for titre, artiste, annee, embed_paroles, str_paroles in res:
                         paroles = Paroles(content=str_paroles, vecteur=embed_paroles)
@@ -66,7 +66,7 @@ class DAO_chanson(DAO):
                     """,
                     (embed_paroles,),
                 )  # (tire, artiste, annee, embed_paroles, str_paroles)
-                res = cursor.fetchone()
+                res = cursor.fetchone() 
                 if res:
                     titre, artiste, annee, embed_paroles, str_paroles = res
                     paroles = Paroles(content=str_paroles, vecteur=embed_paroles)
@@ -99,9 +99,10 @@ class DAO_chanson(DAO):
         """
         Supprime une chanson de la table CHANSON via l'embedding pour l'identifier
         """
-        modif = 0
         with DBConnection().connection as connection:
             with connection.cursor() as cursor:
+                modif = 0
+                # requête correcte si : ligne trouvée et supprimée, aucune ligne trouvée
                 cursor.execute(
                     """
                     DELETE FROM CHANSON
@@ -110,8 +111,6 @@ class DAO_chanson(DAO):
                     """,
                     (titre, artiste),
                 )
-                modif = cursor.rowcount
-            if modif == 1:
+                modif += cursor.rowcount
                 connection.commit()
-                return True
-        return False
+        return modif == 1
