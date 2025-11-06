@@ -84,7 +84,6 @@ class SongCatalogSong(AbstractView):
         ]
 
     def display_info(self):
-        print(self.__song)
         print(f"""
         Titre: {self.__song["titre"]}
         
