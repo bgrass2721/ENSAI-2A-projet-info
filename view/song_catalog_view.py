@@ -102,7 +102,7 @@ class SongCatalogSong(AbstractView):
 
     def make_choice(self):
         reponse = prompt(self.__questions)
-        if reponse["choices"] == "Quitter":
+        if reponse["artiste"] == "Quitter":
             from view.start_view import StartView
 
             return StartView()
