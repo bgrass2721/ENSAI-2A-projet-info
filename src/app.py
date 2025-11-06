@@ -249,7 +249,7 @@ async def get_chanson_by_search(
     Récupère une chanson spécifique par son titre et artiste via le client.
     """
     try:
-        chanson = chanson_client.get_chanson_by_titre_artiste(
+        chanson = chanson_client.get_chanson(
             titre, artiste
         )  # APPEL CLIENT MODIFIÉ
 
