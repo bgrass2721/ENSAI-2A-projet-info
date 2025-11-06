@@ -66,7 +66,7 @@ class DAO_chanson(DAO):
                     """,
                     (embed_paroles,),
                 )  # (tire, artiste, annee, embed_paroles, str_paroles)
-                res = cursor.fetchone() 
+                res = cursor.fetchone()
                 if res:
                     titre, artiste, annee, embed_paroles, str_paroles = res
                     paroles = Paroles(content=str_paroles, vecteur=embed_paroles)
