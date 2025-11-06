@@ -19,9 +19,10 @@ def get_lyrics_from_lrclib(title: str, artist: str):
         response.raise_for_status()
         data = response.json()
 
+        annee = data.get("year")  # Ici, "year" est une supposition, adapte cela si nécessaire.
         # Si des paroles sont disponibles
         if "plainLyrics" in data and data["plainLyrics"]:
-            return data["plainLyrics"]
+            return data
         else:
             print("Paroles non trouvées pour cette chanson.")
             return None
@@ -33,9 +34,9 @@ def get_lyrics_from_lrclib(title: str, artist: str):
 
 #  Exemple d'utilisation :
 if __name__ == "__main__":
-    titre = "Viva La Vida"
-    artiste = "Coldplay"
-    paroles = get_lyrics_from_lrclib(titre, artiste)
+    titre = "Papaoutai"
+    artiste = "Stromae"
+    data = get_lyrics_from_lrclib(titre, artiste)
+    
 
-    if paroles:
-        print(paroles)  # affiche les 1000 premiers caractères
+    print(data)
