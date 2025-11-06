@@ -1,4 +1,3 @@
-# Fichier: test_dao_chanson.py
 
 import pytest
 import numpy as np
