@@ -4,7 +4,14 @@ import pytest
 
 from business_object.chanson import Chanson
 from business_object.paroles import Paroles
+from dao.dao import DAO
 from dao.dao_chanson import DAO_chanson
+
+
+@pytest.fixture
+def reset_db():
+    dao = DAO()
+    dao._drop_table()
 
 
 @pytest.fixture
@@ -18,12 +25,15 @@ def fake_chanson(fake_paroles):
 
 
 def test_add_chanson_ok(fake_chanson):
+    reset_db
     dao = DAO_chanson()
     mock_cursor = MagicMock()
-    mock_cursor.rowcount = 1
+    mock_cursor.rowcount = 1  # simule un INSERT INTO réussi
 
-    with patch("dao_chanson.DBConnection") as mock_conn:
-        mock_conn.return_value.connection.__enter__.return_value.cursor.return_value.__enter__.return_value = mock_cursor
+    # with DBConnection().connection as connection:
+        # with connection.cursor() as cursor:
+    with patch("dao_chanson.DBConnection") as mock_connection:
+        mock_connection.return_value.connection.__enter__.return_value.cursor.return_value.__enter__.return_value = mock_cursor
         res = dao.add_chanson(fake_chanson)
 
     mock_cursor.execute.assert_called_once()
