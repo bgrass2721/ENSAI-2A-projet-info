@@ -46,9 +46,16 @@ class DAO_chanson(DAO):
                     """)  # [(titre, artiste, annee, embed_paroles, str_paroles), (...), ...]
                 res = cursor.fetchall() or None
                 if res:  # None traité comme False : la condition n'est pas remplie
-                    for i in res:
-                        paroles = Paroles(i["str_paroles"], i["embed_paroles"])
-                        chanson = Chanson(i["titre"], i["artiste"], i["annee"], paroles)
+                    for chanson in res:
+                        paroles = Paroles(
+                            content=chanson["str_paroles"], vecteur=chanson["embed_paroles"]
+                        )
+                        chanson = Chanson(
+                            titre=chanson["titre"],
+                            artiste=chanson["artiste"],
+                            annee=chanson["annee"],
+                            paroles=paroles,
+                        )
                         list_Chansons.append(chanson)
                     return list_Chansons
 

@@ -120,9 +120,16 @@ class DAO_playlist(DAO):
                 res = cursor.fetchall() or None
                 if res:
                     chansons = []
-                    for titre, artiste, annee, embed_paroles, str_paroles in res:
-                        paroles = Paroles(content=str_paroles, vecteur=embed_paroles)
-                        chanson = Chanson(titre, artiste, annee, paroles)
+                    for chanson in res:
+                        paroles = Paroles(
+                            content=chanson["str_paroles"], vecteur=chanson["embed_paroles"]
+                        )
+                        chanson = Chanson(
+                            titre=chanson["titre"],
+                            artiste=chanson["artiste"],
+                            annee=chanson["annee"],
+                            parole=paroles,
+                        )
                         chansons.append(chanson)
                     playlist = Playlist(nom, chansons)
                     return playlist
