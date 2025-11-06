@@ -22,8 +22,6 @@ class SongCatalogArtist(AbstractView):
         ]
 
     def display_info(self):
-        with open("src/graphical_assets/banner.txt", "r", encoding="utf-8") as asset:
-            print(asset.read())
         print("Veuillez choisir l'artiste")
 
     def make_choice(self):
@@ -56,8 +54,6 @@ class SongCatalogTitle(AbstractView):
         ]
 
     def display_info(self):
-        with open("src/graphical_assets/banner.txt", "r", encoding="utf-8") as asset:
-            print(asset.read())
         print("Veuillez choisir le titre")
 
     def make_choice(self):
@@ -68,13 +64,15 @@ class SongCatalogTitle(AbstractView):
             return StartView()
 
         else:
-            return SongCatalogSong(self.artiste, reponse["titre"])
+            return SongCatalogSong(self.__artiste, reponse["titre"])
 
 
 class SongCatalogSong(AbstractView):
     def __init__(self, artiste, titre):
+        print("/"+artiste+"/")
+        print("/"+titre+"/")
         self.__song = requests.get(
-            "http://0.0.0.0:5000/chansons/", params={titre: titre, artiste: artiste}
+            "http://0.0.0.0:5000/chansons/search", params={"titre": titre, "artiste": artiste}
         ).json()
         choice = ["Quitter"]
 
@@ -87,19 +85,18 @@ class SongCatalogSong(AbstractView):
         ]
 
     def display_info(self):
-        with open("src/graphical_assets/banner.txt", "r", encoding="utf-8") as asset:
-            print(asset.read())
         print(f"""
-        Titre: {self.song["titre"]}
+        Titre: {self.__song["titre"]}
         
-        Artiste: {self.song["artiste"]}
+        Artiste: {self.__song["artiste"]}
 
         Paroles:
-        {self.song["paroles"]["content"]}
+        {self.__song["paroles"]["content"]}
         """)
 
     def make_choice(self):
         reponse = prompt(self.__questions)
+        print("coucou")
         if reponse["artiste"] == "Quitter":
             from view.start_view import StartView
 

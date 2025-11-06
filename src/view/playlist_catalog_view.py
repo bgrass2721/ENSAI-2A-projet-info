@@ -38,11 +38,7 @@ class PlaylistCatalogView(AbstractView):
         ]
 
     def display_info(self):
-        try:
-            with open("src/graphical_assets/banner.txt", "r", encoding="utf-8") as asset:
-                print(asset.read())
-        except FileNotFoundError:
-            print("--- Mus'IA - Catalogue des Playlists ---")
+        print("--- Mus'IA - Catalogue des Playlists ---")
         print("Veuillez choisir une playlist à inspecter :")
 
 
@@ -91,13 +87,7 @@ class PlaylistDetailView(AbstractView):
             }
         ]
 
-    def display_info(self):
-        try:
-            with open("src/graphical_assets/banner.txt", "r", encoding="utf-8") as asset:
-                print(asset.read())
-        except FileNotFoundError:
-            print("--- Mus'IA ---")
-            
+    def display_info(self):         
         print(f"\n--- Chansons de la playlist: {self.nom_playlist} ---")
 
 
