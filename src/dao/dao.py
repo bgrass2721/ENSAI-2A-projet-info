@@ -27,8 +27,8 @@ class DAO(ABC):
                     UNIQUE(titre, artiste)
                     );
                     CREATE TABLE IF NOT EXISTS CATALOGUE (
-                    id_playlist INT,
-                    id_chanson INT,
+                    id_playlist INT NOT NULL,
+                    id_chanson INT NOT NULL,
                     PRIMARY KEY (id_playlist, id_chanson),
                     FOREIGN KEY (id_playlist) REFERENCES PLAYLIST(id_playlist) ON DELETE CASCADE,
                     FOREIGN KEY (id_chanson) REFERENCES CHANSON(id_chanson) ON DELETE CASCADE
