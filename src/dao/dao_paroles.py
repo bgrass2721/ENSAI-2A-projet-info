@@ -17,7 +17,9 @@ class DAO_paroles(DAO):
                     """)  # [(embed_paroles, str_paroles), (embed_paroles, str_paroles), ...]
                 res = cursor.fetchall() or None
                 if res:
-                    for i in res:
-                        paroles = Paroles(content=i["str_paroles"], vecteur=i["embed_paroles"])
+                    for chanson in res:
+                        paroles = Paroles(
+                            content=chanson["str_paroles"], vecteur=chanson["embed_paroles"]
+                        )
                         list_Paroles.append(paroles)
                     return list_Paroles

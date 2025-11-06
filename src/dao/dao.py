@@ -14,8 +14,7 @@ class DAO(ABC):
                 cursor.execute("""
                     CREATE TABLE IF NOT EXISTS PLAYLIST (
                     id_playlist SERIAL PRIMARY KEY,
-                    nom VARCHAR(255) NOT NULL UNIQUE, 
-                    date_creation DATE DEFAULT CURRENT_DATE
+                    nom VARCHAR(255) NOT NULL UNIQUE
                     );
                     CREATE TABLE IF NOT EXISTS CHANSON (
                     id_chanson SERIAL PRIMARY KEY, 
