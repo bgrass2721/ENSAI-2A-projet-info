@@ -59,5 +59,9 @@ class PlaylistClient:
         list[Chanson]
             une liste d'objets chansons
         """
-        playlist = DAO_playlist().get_playlist_from_id(id)
-        return playlist.get_chansons
+        playlist = DAO_playlist().get_playlist_from_nom(nom)
+
+        if playlist:
+            return playlist.get_chansons() 
+
+        return None

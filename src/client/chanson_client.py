@@ -61,7 +61,7 @@ class ChansonClient:
         Chanson
             un objet chanson
         """
-        return DAO_chanson().get_chanson_from_id(id)
+        return DAO_chanson().get_chanson_from_titre_artiste(titre, artiste)
 
     def get_chanson_paroles(self, chanson):
         """
@@ -74,3 +74,18 @@ class ChansonClient:
             l'objet chanson à modifier
         """
         chanson.paroles = ParolesService().add_from_api(chanson)
+    def get_lyrics_by_titre_artiste(self, titre: str, artiste: str):
+        """
+        Récupère les paroles d'une chanson à partir de son titre et artiste.
+        Formate la réponse pour le ParolesContentModel de l'API.
+        """
+        chanson = DAO_chanson().get_chanson_from_titre_artiste(titre, artiste)
+
+        if chanson and chanson.paroles and chanson.paroles.content:
+            return {
+                "titre": chanson.titre,
+                "artiste": chanson.artiste,
+                "paroles": chanson.paroles.content
+                }
+
+        return None
