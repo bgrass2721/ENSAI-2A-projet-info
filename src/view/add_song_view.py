@@ -23,8 +23,6 @@ class AddSongView(AbstractView):
         ]
 
     def display_info(self):
-        with open("src/graphical_assets/banner.txt", "r", encoding="utf-8") as asset:
-            print(asset.read())
         print("Veuillez entrer le titre et l'artiste sans faute d'orthographe")
 
     def make_choice(self):
