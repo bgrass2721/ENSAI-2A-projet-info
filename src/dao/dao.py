@@ -35,21 +35,39 @@ class DAO(ABC):
                     """)
             connection.commit()
 
-    def _del_data_table(self, nom_table: str | None) -> None:
+    def _del_data_table(self, nom_table: str | None) -> str | None:
         """
         Vide la table donnée en majuscule en argument
         Si aucune table n'est spécifiée, toutes les tables de la DB sont vidées
         """
         # Ordre logique de suppression pour respecter les contraintes FK
         ordre = ["CATALOGUE", "PLAYLIST", "CHANSON"]
-        if nom_table in ordre:
-            with DBConnection().connection as connection:
-                with connection.cursor() as cursor:
+        with DBConnection().connection as connection:
+            with connection.cursor() as cursor:
+                if nom_table in ordre:
                     cursor.execute(f"DELETE FROM {nom_table};")
-                connection.commit()
-        if nom_table is None:
-            with DBConnection().connection as connection:
-                with connection.cursor() as cursor:
+                    return "table vidée"
+                if nom_table is None:
                     for nom_table in ordre:
                         cursor.execute(f"DELETE FROM {nom_table};")
+                    return "tables vidées"
                 connection.commit()
+        return None
+
+    def _drop_table(self, nom_table: str | None = None) -> str | None:
+        """
+        Supprime une ou plusieurs tables de la base PostgreSQL.
+        Si aucun nom n'est fourni, supprime toutes les tables connues.
+        """
+        ordre = ["CATALOGUE", "PLAYLIST", "CHANSON"]
+        with DBConnection().connection as connection:
+            with connection.cursor() as cursor:
+                if nom_table in ordre:
+                    cursor.execute(f"DROP TABLE IF EXISTS {nom_table} CASCADE;")
+                    return "table supprimée"
+                if nom_table is None:
+                    for table in ordre:
+                        cursor.execute(f"DROP TABLE IF EXISTS {table} CASCADE;")
+                    return "tables supprimées"
+                connection.commit()
+        return None
