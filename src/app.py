@@ -167,7 +167,7 @@ async def get_all_playlists():
 @app.get("/playlists/{nom}", response_model=PlaylistModel, tags=["Playlists"])
 async def get_playlist_by_nom(nom: str):
     """
-    Récupère une playlist spécifique par son ID via le client.
+    Récupère une playlist spécifique par son nom via le client.
     """
     try:
         playlist = playlist_client.get_playlist(nom)
@@ -177,7 +177,7 @@ async def get_playlist_by_nom(nom: str):
     except HTTPException as he:
         raise he
     except Exception as e:
-        logging.error(f"Erreur récupération playlist {id_playlist} via client : {e}")
+        logging.error(f"Erreur récupération playlist {nom} via client : {e}")
         raise HTTPException(status_code=500, detail="Erreur interne.")
 
 
