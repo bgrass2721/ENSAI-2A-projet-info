@@ -1,8 +1,8 @@
 import os
 
 import dotenv
-import psycopg2
-from psycopg2.extras import RealDictCursor
+import psycopg2  # fetchall() retourne une liste de tuples
+from psycopg2.extras import RealDictCursor  # fetchall() retourne désormais une liste de dicos
 
 from utils.singleton import Singleton
 
