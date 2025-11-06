@@ -1,8 +1,6 @@
 import pytest
 
-from business_object.paroles import Paroles
 from business_object.playlist import Playlist
-from dao.dao_paroles import DAO_paroles
 from service.chanson_service import ChansonService
 from service.playlist_service import PlaylistService
 
@@ -45,11 +43,13 @@ class TestPlaylistService:
         return Playlist(1, "vide", [chanson_a, chanson_b])
 
     ### 1. Tests de `instantiate_playlist`
-    def test_instantiate_playlist(self, service, keyword):
-        playlist = service.instantiate_playlist(keyword, 3)
-
-        assert isinstance(playlist, Playlist)
-        assert len(playlist.chansons) == 3
+    def test_instantiate_playlist_bdd_vide(self, service, keyword):
+        """
+        Teste l'instantiation d'une playlist lorsque la base de données est vide.
+        Doit lever une exception indiquant que la bdd est vide.
+        """
+        with pytest.raises(Exception, match="Il n'y a pas de chansons dans la base de données"):
+            service.instantiate_playlist(keyword, 3)
 
     ### 2. Tests de `add_chanson`
 

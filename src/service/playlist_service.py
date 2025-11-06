@@ -27,12 +27,18 @@ class PlaylistService:
         # Extraction de tous les objets paroles de la BDD
         paroles = DAO_paroles().get_paroles()
         # Vectorisation du mot-clé
-        key_vector = RequestEmbeddingService.vectorise(keyword)
+        key_vector = RequestEmbeddingService().vectorise(keyword)
         # Initialisation de la liste des distances
         compares = []
-        # Calcul de la distance entre chacun des vecteurs paroles et le mot-clé
-        for parole in paroles:
-            compares.append([parole, RequestEmbeddingService.compare(key_vector, parole.vecteur)])
+        # Si la DAO a pu récupérer les paroles
+        if paroles:
+            # Calcul de la distance entre chacun des vecteurs paroles et le mot-clé
+            for parole in paroles:
+                compares.append([parole, RequestEmbeddingService().compare(key_vector, parole.vecteur)])
+        # Sinon
+        else:
+            # Il n'y a pas de chansons dans la base de données
+            raise Exception("Il n'y a pas de chansons dans la base de données")
         # Tri de la liste des distances dans l'ordre décroissant
         compares.sort(key=lambda x: x[1], reverse=True)
         # Initialisation de la liste de chansons
