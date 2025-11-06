@@ -29,7 +29,7 @@ class ChansonClient:
         try:
             # ChansonService().add_annee(new_chanson)
             ChansonService().add_chanson_paroles(new_chanson)
-        except:
+        except Exception:
             return "La chanson n'est pas trouvable sur l'API"
         DAO_chanson().add_chanson(new_chanson)
 

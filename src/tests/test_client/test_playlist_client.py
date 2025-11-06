@@ -16,4 +16,7 @@ for chanson in chansons:
 
 playlist_1 = PlaylistClient().request_playlist("amour", 5)
 
-print(playlist_1.afficher())
+playlists = PlaylistClient().get_playlists()
+
+for playlist in playlists:
+    print(playlist.afficher())
