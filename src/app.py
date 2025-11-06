@@ -181,13 +181,13 @@ async def get_playlist_by_nom(nom: str):
         raise HTTPException(status_code=500, detail="Erreur interne.")
 
 
-@app.get("/playlists/{id_playlist}/songs", response_model=List[ChansonModel], tags=["Playlists"])
-async def get_songs_from_playlist(id_playlist: int):
+@app.get("/playlists/{nom}/songs", response_model=List[ChansonModel], tags=["Playlists"])
+async def get_songs_from_playlist(nom: str):
     """
     Retourne toutes les chansons d'une playlist via le client.
     """
     try:
-        chansons = playlist_client.get_playlist_chansons(id_playlist)
+        chansons = playlist_client.get_playlist_chansons(nom)
 
         if chansons is None:
             raise HTTPException(status_code=404, detail="Playlist introuvable.")
@@ -229,7 +229,7 @@ async def add_chanson_from_api(chanson_data: NewChansonInput):
     Création complète d'une chanson via le Client.
     """
     try:
-        chanson_complete = ChansonClient.add_new_chanson(
+        chanson_complete = chanson_client.add_new_chanson(
             titre=chanson_data.titre, artiste=chanson_data.artiste
         )
         return chanson_complete
@@ -240,22 +240,22 @@ async def add_chanson_from_api(chanson_data: NewChansonInput):
 
 
 @app.get(
-    "/chansons/{chanson_id}",
+    "/chansons/search",  # NOUVEAU PATH
     response_model=ChansonModel,
-    summary="Fournit les infos d'une chanson par son ID.",
+    summary="Fournit les infos d'une chanson par titre et artiste.",
 )
-async def get_chanson_by_id(
-    chanson_id: int = Path(..., title="L'ID de la chanson à récupérer", ge=1),
+async def get_chanson_by_search(
+    titre: str, artiste: str  # NOUVEAUX PARAMETRES
 ):
     """
-    Récupère une chanson spécifique par son ID via le client.
+    Récupère une chanson spécifique par son titre et artiste via le client.
     """
     try:
-        chanson = chanson_client.get_chanson_by_id(chanson_id)
+        chanson = chanson_client.get_chanson_by_titre_artiste(titre, artiste) # APPEL CLIENT MODIFIÉ
 
         if not chanson:
             raise HTTPException(
-                status_code=404, detail=f"La chanson avec l'ID {chanson_id} n'a pas été trouvée."
+                status_code=404, detail=f"La chanson '{titre}' de {artiste} n'a pas été trouvée."
             )
         return chanson
     except HTTPException as he:
@@ -266,21 +266,21 @@ async def get_chanson_by_id(
 
 
 @app.get(
-    "/chansons/{chanson_id}/lyrics",
+    "/chansons/lyrics/search",  # NOUVEAU PATH
     response_model=ParolesContentModel,
     summary="Retourne le texte des paroles d'une chanson.",
 )
-async def get_lyrics_for_song(chanson_id: int = Path(..., title="L'ID de la chanson", ge=1)):
+async def get_lyrics_for_song(titre: str, artiste: str): # NOUVEAUX PARAMETRES
     """
     Récupère le texte des paroles d'une chanson via le client.
     """
     try:
-        paroles = chanson_client.get_lyrics_by_chanson_id(chanson_id)
+        paroles = chanson_client.get_lyrics_by_titre_artiste(titre, artiste) # APPEL CLIENT MODIFIÉ
 
         if not paroles:
             raise HTTPException(
                 status_code=404,
-                detail=f"Le contenu des paroles n'est pas disponible pour la chanson ID {chanson_id}.",
+                detail=f"Le contenu des paroles n'est pas disponible pour '{titre}' de {artiste}.",
             )
         return paroles
     except HTTPException as he:
