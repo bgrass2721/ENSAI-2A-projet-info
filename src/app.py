@@ -61,7 +61,6 @@ class NewChansonInput(BaseModel):
 
     titre: str
     artiste: str
-    annee: Optional[int] = None
 
 
 class ParolesContentModel(BaseModel):
