@@ -88,7 +88,7 @@ class DAO_chanson(DAO):
             with connection.cursor() as cursor:
                 cursor.execute(
                     """
-                    SELECT titre, artiste, annee, embed_parole, str_paroles
+                    SELECT titre, artiste, annee, embed_paroles, str_paroles
                     FROM CHANSON
                     WHERE titre = %s
                     AND artiste = %s;
