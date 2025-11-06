@@ -45,7 +45,7 @@ class PlaylistClient:
         """
         return DAO_playlist().get_playlist_from_nom(nom)
 
-    def get_playlist_chansons(self, id):
+    def get_playlist_chansons(self, nom):
         """
         Récupère les chansons d'une playlist à partir de son id
 
