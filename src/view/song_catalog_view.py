@@ -69,8 +69,6 @@ class SongCatalogTitle(AbstractView):
 
 class SongCatalogSong(AbstractView):
     def __init__(self, artiste, titre):
-        print("/"+artiste+"/")
-        print("/"+titre+"/")
         self.__song = requests.get(
             "http://0.0.0.0:5000/chansons/search", params={"titre": titre, "artiste": artiste}
         ).json()
@@ -79,12 +77,14 @@ class SongCatalogSong(AbstractView):
         self.__questions = [
             {
                 "type": "list",  # Liste déroulante avec options
+                "message": "",
                 "name": "artiste",  # Nom de la réponse
                 "choices": choice,  # Options disponibles
             }
         ]
 
     def display_info(self):
+        print(self.__song)
         print(f"""
         Titre: {self.__song["titre"]}
         
@@ -96,7 +96,6 @@ class SongCatalogSong(AbstractView):
 
     def make_choice(self):
         reponse = prompt(self.__questions)
-        print("coucou")
         if reponse["artiste"] == "Quitter":
             from view.start_view import StartView
 

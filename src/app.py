@@ -92,6 +92,7 @@ async def create_playlist(data: PlaylistCreationModel):
     - Les chansons sont automatiquement recherchées basées sur le mot-clé
     - Retourne la playlist créée avec toutes ses chansons
     """
+    print(data)
     try:
         # Validation des entrées
         if data.nbsongs <= 0 or data.nbsongs > 50:

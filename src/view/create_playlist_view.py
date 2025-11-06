@@ -15,7 +15,7 @@ class CreatePlaylistView(AbstractView):
                 "invalid_message": "Le thème de la playlist doit faire plus de 2 caractères.",
             },
             {
-                "type": "number",  # Demande une saisie texte
+                "type": "number",
                 "message": " Nombre de musique max : ",
                 "name": "nbsongs",  # Nom de la réponse
                 "validate": lambda result: result.isdigit() and 1 <= int(result),  # Validation pour ne pas laisser vide
@@ -28,14 +28,15 @@ class CreatePlaylistView(AbstractView):
 
     def make_choice(self):
         reponses = prompt(self.__questions)
-        response = requests.post("http://0.0.0.0:5000/playlists", params=reponses)
+        reponses["nbsongs"]=int(reponses["nbsongs"])
+        print(reponses)
+        response = requests.post("http://0.0.0.0:5000/playlists", json=reponses)
         if response.status_code == 500:
             print("Echec de la création de la playlist")
             from view.start_view import StartView
 
             return StartView()
         else:
-            response = requests.post("http://0.0.0.0:5000/playlists", params=reponses).json()
             from view.playlist_catalog_view import PlaylistDetailView
 
-            return PlaylistDetailView(response["nom"])
+            return PlaylistDetailView(reponses["nom"])

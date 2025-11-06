@@ -13,7 +13,7 @@ class PlaylistCatalogView(AbstractView):
         
         try:
             # Récupère la liste de toutes les playlists
-            response = requests.get("http://0.0.0.0:5000/playlists").json()
+            response = requests.get("http://0.0.0.0:5000/playlists")
             response.raise_for_status() 
             
             playlists_data = response.json()
@@ -67,7 +67,7 @@ class PlaylistDetailView(AbstractView):
         try:
             # Appelle l'endpoint pour récupérer les chansons de cette playlist
             url = f"http://0.0.0.0:5000/playlists/{self.nom_playlist}/songs"
-            response = requests.get(url).json()
+            response = requests.get(url)
             response.raise_for_status()
             
             chansons = response.json()
@@ -93,10 +93,10 @@ class PlaylistDetailView(AbstractView):
 
     def make_choice(self):
         reponse = prompt(self.__questions)
-        if reponse["choices"] == "Quitter":
+        if reponse["action"] == "Quitter":
             from view.start_view import StartView
             return StartView()
         else:
-            artiste, titre = reponse["choices"].split(" | ", 1)
+            artiste, titre = reponse["action"].split(" | ", 1)
             from view.song_catalog_view import SongCatalogSong
             return SongCatalogSong(artiste,titre)
