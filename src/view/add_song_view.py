@@ -29,7 +29,7 @@ class AddSongView(AbstractView):
 
     def make_choice(self):
         reponses = prompt(self.__questions)
-        response = requests.post("http://127.0.0.1:8000/chansons/", json=responses)
+        response = requests.post("http://127.0.0.1:8000/chansons/", json=reponses)
         if response.status_code == 500:
             print("La musique est introuvable")
         else:

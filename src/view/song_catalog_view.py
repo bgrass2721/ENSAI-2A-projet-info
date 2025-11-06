@@ -94,8 +94,6 @@ class SongCatalogSong(AbstractView):
         
         Artiste: {self.song.artiste}
 
-        Année: {self.song.annee}
-
         Paroles:
         {self.song.paroles.content}
         """)
