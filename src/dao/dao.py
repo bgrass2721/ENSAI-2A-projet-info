@@ -8,7 +8,7 @@ class DAO(ABC):
         """
         Crée la BD si elle n'est pas créée
         """
-        self.ordre_suppr_table = ["CATALOGUE", "PLAYLIST", "CHANSON"]
+        self.ordre_suppr_tables = ["CATALOGUE", "PLAYLIST", "CHANSON"]
         # Ordre logique de suppression pour respecter les contraintes FK
         with DBConnection().connection as connection:
             with connection.cursor() as cursor:
@@ -62,12 +62,12 @@ class DAO(ABC):
         """
         with DBConnection().connection as connection:
             with connection.cursor() as cursor:
-                if nom_table in self.ordre_suppr_table:
+                if nom_table in self.ordre_suppr_tables:
                     cursor.execute(f"DROP TABLE IF EXISTS {nom_table} CASCADE;")
                     connection.commit()
                     return "table supprimée"
                 if nom_table is None:
-                    for table in self.ordre_suppr_table:
+                    for table in self.ordre_suppr_tables:
                         cursor.execute(f"DROP TABLE IF EXISTS {table} CASCADE;")
                     connection.commit()
                     return "tables supprimées"
