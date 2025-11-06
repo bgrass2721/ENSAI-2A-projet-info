@@ -36,7 +36,7 @@ class DAO_playlist(DAO):
                             """
                             SELECT id_chanson 
                             FROM CHANSON
-                            WHERE embed_paroles::text = %s::text;
+                            WHERE embed_paroles = %s::float8[];
                             """,
                             (embed_paroles,),
                         )  # (id_chanson, )
