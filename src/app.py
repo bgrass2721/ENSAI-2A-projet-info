@@ -32,7 +32,6 @@ class ChansonModel(BaseModel):
     titre: str
     artiste: str
     paroles: Optional[ParolesModel]
-    année: Optional[int]
     model_config = {"from_attributes": True}
 
 
@@ -249,7 +248,7 @@ async def get_chanson_by_search(
     Récupère une chanson spécifique par son titre et artiste via le client.
     """
     try:
-        chanson = chanson_client.get_chanson_by_titre_artiste(
+        chanson = chanson_client.get_chanson(
             titre, artiste
         )  # APPEL CLIENT MODIFIÉ
 
