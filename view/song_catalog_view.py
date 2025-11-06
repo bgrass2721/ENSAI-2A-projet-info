@@ -12,7 +12,7 @@ class SongCatalogArtist(AbstractView):
             if song.artiste not in songs:
                 songs.append(song.artiste)
 
-        __questions = [
+        self.__questions = [
             {
                 "type": "list",  # Liste déroulante avec options
                 "message": "Noms des artistes",
@@ -28,18 +28,18 @@ class SongCatalogArtist(AbstractView):
 
     def make_choice(self):
         reponse = prompt(self.__questions)
-        if reponse["choices"] == "Quitter":
+        if reponse["artiste"] == "Quitter":
             from view.start_view import StartView
 
             return StartView()
 
         else:
-            return SongCatalogArtist(reponse["choices"])
+            return SongCatalogArtist(reponse["artiste"])
 
 
 class SongCatalogTitle(AbstractView):
     def __init__(self, artiste):
-        __artiste = artiste
+        self.__artiste = artiste
         allsongs = requests.get("http://127.0.0.1:8000/chansons/")
         songs = ["Quitter"]
         for song in allsongs:
@@ -50,7 +50,7 @@ class SongCatalogTitle(AbstractView):
             {
                 "type": "list",  # Liste déroulante avec options
                 "message": "Titres des musiques",
-                "name": "artiste",  # Nom de la réponse
+                "name": "titre",  # Nom de la réponse
                 "choices": songs,  # Options disponibles
             }
         ]
@@ -62,13 +62,13 @@ class SongCatalogTitle(AbstractView):
 
     def make_choice(self):
         reponse = prompt(self.__questions)
-        if reponse["choices"] == "Quitter":
+        if reponse["titre"] == "Quitter":
             from view.start_view import StartView
 
             return StartView()
 
         else:
-            return SongCatalogSong(self.artiste, reponse["choices"])
+            return SongCatalogSong(self.artiste, reponse["artiste"])
 
 
 class SongCatalogSong(AbstractView):
