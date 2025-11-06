@@ -21,7 +21,7 @@ class DAO_chanson(DAO):
             raise TypeError("chanson.annee not int or None")
         if not isinstance(chanson.paroles.vecteur, list):
             raise TypeError("chanson.paroles.vecteur not list")
-        if not all(isinstance(x, (int, float)) for x in chanson.paroles.vecteur):
+        if not all(isinstance(x, float) for x in chanson.paroles.vecteur):
             raise TypeError("chanson.paroles.vecteur not list")
         if not isinstance(chanson.paroles.content, str):
             raise TypeError("chanson.paroles.content not str")
