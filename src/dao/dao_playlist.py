@@ -13,9 +13,9 @@ class DAO_playlist(DAO):
         """
         Ajoute une playlist à la table PLAYLIST de la BD et remplit la table CATALOGUE de la BD
         """
-        modif = 0
         with DBConnection().connection as connection:
             with connection.cursor() as cursor:
+                modif = 0
                 cursor.execute(
                     """
                     INSERT INTO PLAYLIST (nom)
@@ -52,9 +52,7 @@ class DAO_playlist(DAO):
                             )
                             modif = cursor.rowcount
             connection.commit()
-        if modif == 1:
-            return True
-        return False
+            return modif == 1
 
     def get_playlists(self) -> list[Playlist] | None:
         playlists = []
@@ -134,9 +132,9 @@ class DAO_playlist(DAO):
         Les lignes associées dans CATALOGUE sont supprimées
         automatiquement grâce au ON DELETE CASCADE
         """
-        modif = 0
         with DBConnection().connection as connection:
             with connection.cursor() as cursor:
+                modif = 0
                 cursor.execute(
                     """
                     DELETE FROM PLAYLIST
@@ -144,8 +142,6 @@ class DAO_playlist(DAO):
                     """,
                     (nom,),
                 )
-                modif = cursor.rowcount
-            if modif == 1:
-                connection.commit()
-                return True
-        return False
+                modif += cursor.rowcount
+            connection.commit()
+            return modif
