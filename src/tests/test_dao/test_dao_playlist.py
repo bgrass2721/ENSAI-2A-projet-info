@@ -27,7 +27,7 @@ class TestDAOPlaylist:
         assert result is True
         
     # 2. Tester la récupération de toutes les playlists
-    def test_02_get_playlists_success(self, clean_db, setup_chansons, playlist_avec_chansons):
+    def test_02_get_plalists_success(self, clean_db, setup_chansons, playlist_avec_chansons):
         # GIVEN
         dao = DAO_playlist()
         dao.add_playlist(playlist_avec_chansons)

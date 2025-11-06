@@ -5,7 +5,7 @@ from dao.dao_chanson import DAO_chanson
 class TestDAOChanson:
 
     # 1. Tester l'ajout et la récupération simple
-    def test_01_add_and_get_chansons_success(self, clean_db, chanson_imagine):
+    def test_01_add_ad_get_chansons_success(self, clean_db, chanson_imagine):
         # GIVEN
         dao = DAO_chanson()
 

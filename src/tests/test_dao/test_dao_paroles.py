@@ -7,7 +7,7 @@ from dao.dao_chanson import DAO_chanson
 class TestDAOParoles:
     
     # 1. Tester la récupération de toutes les paroles (base vide)
-    def test_01_get_paroles_empty_db(self, clean_db):
+    def test_01_get_parles_empty_db(self, clean_db):
         # GIVEN
         dao = DAO_paroles()
 
