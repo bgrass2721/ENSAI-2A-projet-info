@@ -141,7 +141,7 @@ class DAO_playlist(DAO):
                             titre=chanson["titre"],
                             artiste=chanson["artiste"],
                             annee=chanson["annee"],
-                            parole=paroles,
+                            paroles=paroles,
                         )
                         chansons.append(chanson)
                     playlist = Playlist(nom, chansons)
