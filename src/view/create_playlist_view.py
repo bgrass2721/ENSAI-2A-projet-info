@@ -38,6 +38,7 @@ class CreatePlaylistView(AbstractView):
 
             return StartView()
         else:
+            response = requests.post("http://0.0.0.0:5000/playlists", params=reponses).json()
             from view.playlist_catalog_view import PlaylistDetailView
 
             return PlaylistDetailView(response["nom"])

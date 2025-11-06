@@ -13,14 +13,14 @@ class PlaylistCatalogView(AbstractView):
         
         try:
             # Récupère la liste de toutes les playlists
-            response = requests.get("http://0.0.0.0:5000/playlists")
+            response = requests.get("http://0.0.0.0:5000/playlists").json()
             response.raise_for_status() 
             
             playlists_data = response.json()
             
             # Ajoute les noms des playlists à la liste
             for playlist in playlists_data:
-                if 'nom' in playlist:
+                if playlist['nom'] not in playlist:
                     self.list_playlist_noms.append(playlist['nom'])
 
         except requests.exceptions.RequestException as e:
@@ -50,13 +50,12 @@ class PlaylistCatalogView(AbstractView):
         from view.start_view import StartView
         
         reponse = prompt(self.__questions)
-        choix_nom = reponse.get("playlist_nom")
+        choix_nom = reponse["playlist_nom"]
 
-        if choix_nom == "Quitter" or not choix_nom:
+        if choix_nom == "Quitter":
             return StartView()
         
-        else: 
-            # Transfère vers la vue de détail pour ce nom de playlist
+        else:
             return PlaylistDetailView(choix_nom)
 
 
@@ -67,15 +66,17 @@ class PlaylistDetailView(AbstractView):
     """
     def __init__(self, nom_playlist: str):
         self.nom_playlist = nom_playlist
-        self.chansons = []
+        self.chansons = ["Quitter"]
         
         try:
             # Appelle l'endpoint pour récupérer les chansons de cette playlist
             url = f"http://0.0.0.0:5000/playlists/{self.nom_playlist}/songs"
-            response = requests.get(url)
+            response = requests.get(url).json()
             response.raise_for_status()
             
-            self.chansons = response.json()
+            chansons = response.json()
+            for song in chansons:
+                self.chansons.append(song["artiste"]+" | "+song["titre"])
             
         except requests.exceptions.RequestException as e:
             print(f"Erreur lors de la récupération des chansons pour '{self.nom_playlist}': {e}")
@@ -86,7 +87,7 @@ class PlaylistDetailView(AbstractView):
                 "type": "list",
                 "message": "Appuyez sur Entrée pour quitter",
                 "name": "action",
-                "choices": ["Quitter"],
+                "choices": self.chansons,
             }
         ]
 
@@ -98,24 +99,14 @@ class PlaylistDetailView(AbstractView):
             print("--- Mus'IA ---")
             
         print(f"\n--- Chansons de la playlist: {self.nom_playlist} ---")
-        
-        if not self.chansons:
-            print("\nCette playlist est vide.")
-        else:
-            # Affiche les chansons trouvées
-            for i, chanson in enumerate(self.chansons, 1):
-                titre = chanson.get('titre', 'N/A')
-                artiste = chanson.get('artiste', 'N/A')
-                annee = chanson.get('annee', 'N/A')
-                print(f"  {i}. {titre} - {artiste} ({annee})")
-        print("-" * (len(self.nom_playlist) + 32))
 
 
     def make_choice(self):
-        from view.start_view import StartView
-        
-        # Pose la question "Quitter"
-        prompt(self.__questions)
-        
-        # Quoi qu'il arrive, retourne au menu principal
-        return StartView()
+        reponse = prompt(self.__questions)
+        if reponse["choices"] == "Quitter":
+            from view.start_view import StartView
+            return StartView()
+        else:
+            artiste, titre = reponse["choices"].split(" | ", 1)
+            from view.song_catalog_view import SongCatalogSong
+            return SongCatalogSong(artiste,titre)

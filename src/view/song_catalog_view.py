@@ -6,11 +6,11 @@ from view.abstract_view import AbstractView
 
 class SongCatalogArtist(AbstractView):
     def __init__(self):
-        allsongs = requests.get("http://0.0.0.0:5000/chansons/")
+        allsongs = requests.get("http://0.0.0.0:5000/chansons/").json()
         songs = ["Quitter"]
         for song in allsongs:
-            if song.artiste not in songs:
-                songs.append(song.artiste)
+            if song["artiste"] not in songs:
+                songs.append(song["artiste"])
 
         self.__questions = [
             {
@@ -40,7 +40,7 @@ class SongCatalogArtist(AbstractView):
 class SongCatalogTitle(AbstractView):
     def __init__(self, artiste):
         self.__artiste = artiste
-        allsongs = requests.get("http://0.0.0.0:5000/chansons/")
+        allsongs = requests.get("http://0.0.0.0:5000/chansons/").json()
         songs = ["Quitter"]
         for song in allsongs:
             if song.artiste == artiste:
@@ -75,7 +75,7 @@ class SongCatalogSong(AbstractView):
     def __init__(self, artiste, titre):
         __song = requests.get(
             "http://0.0.0.0:5000/chansons/", params={titre: titre, artiste: artiste}
-        )
+        ).json()
         choice = ["Quitter"]
 
         __questions = [
