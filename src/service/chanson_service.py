@@ -1,4 +1,4 @@
-import requests
+# import requests
 
 from business_object.chanson import Chanson
 from service.paroles_embedding_service import ParolesEmbeddingService
