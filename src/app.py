@@ -31,7 +31,6 @@ class ChansonModel(BaseModel):
 
     titre: str
     artiste: str
-    annee: Optional[int]
     paroles: Optional[ParolesModel]
 
     model_config = {"from_attributes": True}
