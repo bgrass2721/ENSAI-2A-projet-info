@@ -9,6 +9,24 @@ class DAO_chanson(DAO):
         """
         Ajoute une chanson à la table CHANSON de la BD
         """
+        if not isinstance(chanson, Chanson):
+            raise TypeError("chanson not Chanson")
+        if not isinstance(chanson.paroles, Paroles):
+            raise TypeError("chanson.paroles not Paroles")
+        if not isinstance(chanson.titre, str):
+            raise ValueError("chanson.titre not str")
+        if not isinstance(chanson.artiste, str):
+            raise ValueError("chanson.artiste not str")
+        if not (isinstance(chanson.annee, int) or chanson.annee is None):
+            raise TypeError("chanson.annee not int or None")
+        if not isinstance(chanson.paroles.vecteur, list):
+            raise TypeError("chanson.paroles.vecteur not list")
+        if not all(isinstance(x, float) for x in chanson.paroles.vecteur):
+            raise TypeError("chanson.paroles.vecteur not list")
+        if not isinstance(chanson.paroles.content, str):
+            raise TypeError("chanson.paroles.content not str")
+        """
+        """
         with DBConnection().connection as connection:
             with connection.cursor() as cursor:
                 modif = 0
