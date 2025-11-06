@@ -34,7 +34,9 @@ class PlaylistService:
         if paroles:
             # Calcul de la distance entre chacun des vecteurs paroles et le mot-clé
             for parole in paroles:
-                compares.append([parole, RequestEmbeddingService().compare(key_vector, parole.vecteur)])
+                compares.append(
+                    [parole, RequestEmbeddingService().compare(key_vector, parole.vecteur)]
+                )
         # Sinon
         else:
             # Il n'y a pas de chansons dans la base de données
@@ -53,9 +55,7 @@ class PlaylistService:
         # Sinon, on ajoute toutes les chansons dans l'ordre
         else:
             for compare in compares:
-                chansons.append(
-                    DAO_chanson().get_chanson_from_from_embed_paroles(compare[0].vecteur)
-                )
+                chansons.append(DAO_chanson().get_chanson_from_embed_paroles(compare[0].vecteur))
         # Retour de l'objet playlist avec les chansons
         return Playlist(keyword, chansons)
 
