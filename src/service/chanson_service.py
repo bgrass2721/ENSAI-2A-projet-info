@@ -21,28 +21,28 @@ class ChansonService:
         paroles.vecteur = ParolesEmbeddingService().vectorise(paroles.content)
         chanson.paroles = paroles
 
-    def add_annee(self, chanson: Chanson):
-        """
-        Recherche l'année de sortie d'une chanson via LRCLIB à partir du titre et de l'artiste.
-        Retourne l'année si trouvée, sinon None.
-        """
-        # URL de l'API de recherche LRCLIB
-        url = "https://lrclib.net/api/get"
+    # def add_annee(self, chanson: Chanson):
+    #     """
+    #     Recherche l'année de sortie d'une chanson via LRCLIB à partir du titre et de l'artiste.
+    #     Retourne l'année si trouvée, sinon None.
+    #     """
+    #     # URL de l'API de recherche LRCLIB
+    #     url = "https://lrclib.net/api/get"
 
-        # Paramètres de la requête
-        params = {"track_name": chanson.titre, "artist_name": chanson.artiste}
+    #     # Paramètres de la requête
+    #     params = {"track_name": chanson.titre, "artist_name": chanson.artiste}
 
-        try:
-            response = requests.get(url, params=params, timeout=10)
-            response.raise_for_status()
-            data = response.json()
+    #     try:
+    #         response = requests.get(url, params=params, timeout=10)
+    #         response.raise_for_status()
+    #         data = response.json()
 
-            # Extraire l'année si disponible
-            annee = data.get("year")  # Ici, "year" est une supposition, adapte cela si nécessaire.
-            chanson.annee = annee
+    #         # Extraire l'année si disponible
+    #         annee = data.get("year")  # Ici, "year" est une supposition, adapte cela si nécessaire.
+    #         chanson.annee = annee
 
-        except requests.exceptions.RequestException as e:
-            raise Exception(f"Erreur lors de la requête : {e}")
+    #     except requests.exceptions.RequestException as e:
+    #         raise Exception(f"Erreur lors de la requête : {e}")
 
 
 if __name__ == "__main__":

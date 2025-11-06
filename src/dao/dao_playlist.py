@@ -73,6 +73,7 @@ class DAO_playlist(DAO):
                     JOIN CHANSON c ON cat.id_chanson = c.id_chanson
                     ORDER BY p.id_playlist;
                 """)
+                # ORDER BY nécessaire pour GROUP BY
                 # [(id_playlist, nom, titre, artiste, annee, embed_paroles, str_paroles),
                 # (...), ...]
                 res = cursor.fetchall() or None
@@ -80,7 +81,9 @@ class DAO_playlist(DAO):
                     # groupby et itemgetter sont natifs de Python
                     # GROUP BY id_playlist
                     # 0 car id_playlist est le premier élément de chaque tuple
-                    for id_playlist, group in groupby(res, key=itemgetter(0)):
+                    # groupby ne marche pas avec une liste de dicos
+                    list_tup = tuple(res.values())
+                    for id_playlist, group in groupby(list_tup, key=itemgetter(0)):
                         group = list(group)
                         # [(id_playlist, nom, titre, artiste, annee, embed_paroles, str_paroles),
                         # (...), ...] avec le même id_playlist dans chaque tuple
@@ -110,7 +113,7 @@ class DAO_playlist(DAO):
                         c.str_paroles
                     FROM PLAYLIST p
                     JOIN CATALOGUE cat ON p.id_playlist = cat.id_playlist
-                    JOIN CHANSON c ON c.embed_paroles = cat.embed_paroles
+                    JOIN CHANSON c ON c.id.chanson = cat.id_chanson
                     WHERE p.nom = %s;
                     """,
                     (nom,),
