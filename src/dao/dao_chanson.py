@@ -69,7 +69,7 @@ class DAO_chanson(DAO):
                     """
                     SELECT titre, artiste, annee, embed_paroles, str_paroles
                     FROM CHANSON
-                    WHERE embed_paroles::text = %s::text;
+                    WHERE embed_paroles = %s::float8[];
                     """,
                     (embed_paroles,),
                 )  # (tire, artiste, annee, embed_paroles, str_paroles)
