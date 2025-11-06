@@ -47,7 +47,7 @@ class ChansonClient:
         """
         return DAO_chanson().get_chansons()
 
-    def get_chanson(self, id):
+    def get_chanson(self, titre, artiste):
         """
         Récupère une chanson à partir de son id
 
