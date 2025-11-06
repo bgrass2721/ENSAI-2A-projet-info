@@ -30,19 +30,19 @@ class StartView(AbstractView):
             pass
 
         elif reponse["choix"] == "Ajouter une musique":
-            from view.connection_view import ConnectionView
+            from view.add_song_view import AddSongView
 
-            return ConnectionView()
+            return AddSongView()
 
         elif reponse["choix"] == "Créer une playlist":
-            from view.create_playlist_view import Create_PlaylistView
+            from view.create_playlist_view import CreatePlaylistView
 
             return CreatePlaylistView()
 
         elif reponse["choix"] == "Catalogue de musiques":
-            from view.pokemon_list_view import PokemonListView
+            from view.song_catalog_view import SongCatalogArtist
 
-            return PokemonListView()
+            return SongCatalogArtist()
 
         elif reponse["choix"] == "Catalogue de playlists":
             from view.playlist_catalog_view import PlaylistCatalogView
