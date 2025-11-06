@@ -32,7 +32,7 @@ class ChansonModel(BaseModel):
     titre: str
     artiste: str
     paroles: Optional[ParolesModel]
-
+    année: Optional[int]
     model_config = {"from_attributes": True}
 
 
@@ -218,9 +218,7 @@ async def get_all_chansons():
 
 
 @app.post(
-    "/chansons/",
-    response_model=ChansonModel,
-    summary="Ajoute une chanson (récupération auto des paroles).",
+    "/chansons/", summary="Ajoute une chanson (récupération auto des paroles).",
 )
 async def add_chanson_from_api(chanson_data: NewChansonInput):
     """
