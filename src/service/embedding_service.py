@@ -12,7 +12,7 @@ class EmbeddingService(ABC):
 
     def __init__(self):
         self.OLLAMA_EMBED_URL = "https://llm.lab.sspcloud.fr/ollama/api/embed"
-        self.token = "sk-9362a2b2bec045af9dfc896ee3d4e14c"
+        self.token = "sk-9362a2b2bec045af9dfc896ee3d4e14c"  # Clem
         self.model = "bge-m3"
 
     def vectorise(self, texte: str) -> list:

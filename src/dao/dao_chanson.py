@@ -9,9 +9,11 @@ class DAO_chanson(DAO):
         """
         Ajoute une chanson à la table CHANSON de la BD
         """
-        modif = 0
         with DBConnection().connection as connection:
             with connection.cursor() as cursor:
+                modif = 0
+                # si la requête n'est pas correcte, modif ne serait pas initialisée
+                # correcte si : requête correcte, requête correcte avec valeur dupliquée
                 cursor.execute(
                     """
                     INSERT INTO CHANSON (titre, artiste, annee, embed_paroles, str_paroles)
@@ -27,11 +29,9 @@ class DAO_chanson(DAO):
                         "str_paroles": chanson.paroles.content,
                     },
                 )
-                modif = cursor.rowcount
+                modif += cursor.rowcount
             connection.commit()
-        if modif == 1:
-            return True
-        return
+            return modif == 1
 
     def get_chansons(self) -> list[Chanson] | None:
         """
@@ -99,9 +99,10 @@ class DAO_chanson(DAO):
         """
         Supprime une chanson de la table CHANSON via l'embedding pour l'identifier
         """
-        modif = 0
         with DBConnection().connection as connection:
             with connection.cursor() as cursor:
+                modif = 0
+                # requête correcte si : ligne trouvée et supprimée, aucune ligne trouvée
                 cursor.execute(
                     """
                     DELETE FROM CHANSON
@@ -110,8 +111,6 @@ class DAO_chanson(DAO):
                     """,
                     (titre, artiste),
                 )
-                modif = cursor.rowcount
-            if modif == 1:
-                connection.commit()
-                return True
-        return False
+                modif += cursor.rowcount
+            connection.commit()
+            return modif == 1
