@@ -12,7 +12,7 @@ class SongCatalogArtist(AbstractView):
             if not song.artiste in songs:
                 songs.append(song.artiste)
 
-        __questions = [
+        self.__questions = [
         {
             "type": "list",  # Liste déroulante avec options
             "message": "Noms des artistes",
