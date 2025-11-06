@@ -37,7 +37,7 @@ class DAO(ABC):
 
     def _del_data_table(self, nom_table: str | None) -> str | None:
         """
-        Vide la table donnée en majuscule en argument
+        Vide la table donnée en argument en majuscule
         Si aucune table n'est spécifiée, toutes les tables de la DB sont vidées
         """
         # Ordre logique de suppression pour respecter les contraintes FK
@@ -56,8 +56,8 @@ class DAO(ABC):
 
     def _drop_table(self, nom_table: str | None = None) -> str | None:
         """
-        Supprime une ou plusieurs tables de la base PostgreSQL.
-        Si aucun nom n'est fourni, supprime toutes les tables connues.
+        Supprime la table donnée en argument en majuscule
+        Si aucune table n'est spécifiée, toutes les tables de la DB sont supprimées
         """
         ordre = ["CATALOGUE", "PLAYLIST", "CHANSON"]
         with DBConnection().connection as connection:
