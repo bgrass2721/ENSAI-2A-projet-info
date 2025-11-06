@@ -31,7 +31,6 @@ class ChansonModel(BaseModel):
 
     titre: str
     artiste: str
-    annee: Optional[int]
     paroles: Optional[ParolesModel]
 
     model_config = {"from_attributes": True}
@@ -62,7 +61,6 @@ class NewChansonInput(BaseModel):
 
     titre: str
     artiste: str
-    annee: Optional[int] = None
 
 
 class ParolesContentModel(BaseModel):
@@ -195,7 +193,7 @@ async def get_songs_from_playlist(nom: str):
     except HTTPException as he:
         raise he
     except Exception as e:
-        logging.error(f"Erreur récupération chansons de playlist {id_playlist} via client : {e}")
+        logging.error(f"Erreur récupération chansons de playlist {nom} via client : {e}")
         raise HTTPException(status_code=500, detail="Erreur interne.")
 
 
@@ -261,7 +259,7 @@ async def get_chanson_by_search(
     except HTTPException as he:
         raise he
     except Exception as e:
-        logging.error(f"Erreur récupération chanson {chanson_id} via client: {e}")
+        logging.error(f"Erreur récupération chanson '{titre}' de {artiste} via client: {e}")
         raise HTTPException(status_code=500, detail="Erreur interne.")
 
 
@@ -286,7 +284,7 @@ async def get_lyrics_for_song(titre: str, artiste: str): # NOUVEAUX PARAMETRES
     except HTTPException as he:
         raise he
     except Exception as e:
-        logging.error(f"Erreur récupération paroles {chanson_id} via client: {e}")
+        logging.error(f"Erreur récupération paroles '{titre}' de {artiste} via client: {e}")
         raise HTTPException(status_code=500, detail="Erreur interne.")
 
 
