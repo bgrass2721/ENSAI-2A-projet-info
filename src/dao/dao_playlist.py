@@ -27,7 +27,7 @@ class DAO_playlist(DAO):
                 )  # (id_playlist, )
                 res = cursor.fetchone()
                 if res:  # si une playlist porte déjà le même nom : retourne None
-                    id_playlist = res[0]
+                    id_playlist = res["id_playlist"]
                     chansons = playlist.chansons
                     for chanson in chansons:
                         embed_paroles = chanson.paroles.vecteur
@@ -42,8 +42,7 @@ class DAO_playlist(DAO):
                         )  # (id_chanson, )
                         res = cursor.fetchone()
                         if res:
-                            id_chanson = res[0]
-
+                            id_chanson = res["id_chanson"]
                             cursor.execute(
                                 """
                                 INSERT INTO CATALOGUE (id_playlist, id_chanson)

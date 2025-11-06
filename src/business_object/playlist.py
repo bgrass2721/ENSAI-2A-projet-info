@@ -7,8 +7,6 @@ class Playlist:
 
     Attributs
     ---------
-    id : int
-        Identifiant unique de la playlist.
     nom : str
         Nom attribué à la playlist.
     chansons : list[Chanson]
@@ -32,8 +30,7 @@ class Playlist:
       1. Imagine - John Lennon (1971)
     """
 
-    def __init__(self, id: int, nom: str, chansons: list[Chanson] = None):
-        self.id = id
+    def __init__(self, nom: str, chansons: list[Chanson] = None):
         self.nom = nom
         self.chansons = chansons if chansons is not None else []
 
