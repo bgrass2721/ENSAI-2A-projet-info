@@ -1,6 +1,9 @@
 import pytest
 
+from business_object.chanson import Chanson
 from business_object.playlist import Playlist
+from dao.dao import DAO
+from dao.dao_chanson import DAO_chanson
 from service.chanson_service import ChansonService
 from service.playlist_service import PlaylistService
 
@@ -35,12 +38,12 @@ class TestPlaylistService:
 
     @pytest.fixture
     def playlist_vide(self):
-        return Playlist(1, "vide")
+        return Playlist("vide")
 
     @pytest.fixture
     def playlist_pleine(self, chanson_a, chanson_b):
         # Créer une playlist contenant déjà chanson_a et chanson_b
-        return Playlist(1, "vide", [chanson_a, chanson_b])
+        return Playlist("pleine", [chanson_a, chanson_b])
 
     ### 1. Tests de `instantiate_playlist`
     def test_instantiate_playlist_bdd_vide(self, service, keyword):
@@ -48,8 +51,36 @@ class TestPlaylistService:
         Teste l'instantiation d'une playlist lorsque la base de données est vide.
         Doit lever une exception indiquant que la bdd est vide.
         """
+        DAO()._drop_table()
         with pytest.raises(Exception, match="Il n'y a pas de chansons dans la base de données"):
             service.instantiate_playlist(keyword, 3)
+
+    def test_instantiate_playlist_succes(self, service, chanson_a, chanson_b, chanson_c, keyword):
+        """
+        Teste l'instanciation d'une playlist avec trois chansons dans la bdd
+        Doit retourner une playlist de 3 chansons même si le nb_max = 5
+        """
+        DAO()._drop_table()
+
+        ChansonService().add_chanson_paroles(chanson_a)
+        DAO_chanson().add_chanson(chanson_a)
+        ChansonService().add_chanson_paroles(chanson_b)
+        DAO_chanson().add_chanson(chanson_b)
+        ChansonService().add_chanson_paroles(chanson_c)
+        DAO_chanson().add_chanson(chanson_c)
+
+        playlist = service.instantiate_playlist(keyword, 5)
+
+        assert playlist.nom == keyword
+        assert len(playlist.chansons) == 3
+        assert playlist.chansons is not None
+        for chanson in playlist.chansons:
+            assert isinstance(chanson, Chanson)
+
+        assert chanson_a in playlist.chansons
+        assert chanson_b in playlist.chansons
+        assert chanson_c in playlist.chansons
+        print("\n✓ Instanciation de playlist réussie.")
 
     ### 2. Tests de `add_chanson`
 
@@ -128,7 +159,4 @@ class TestPlaylistService:
 
         # Aucune erreur, taille inchangée
         assert len(playlist_vide.chansons) == 0
-        print("\n✓ Suppression sur playlist vide gérée.")
-        assert len(playlist_vide.chansons) == 0
-        print("\n✓ Suppression sur playlist vide gérée.")
         print("\n✓ Suppression sur playlist vide gérée.")
