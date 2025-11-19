@@ -1,11 +1,11 @@
-from business_object.playlist import Playlist
 from business_object.chanson import Chanson
+from business_object.playlist import Playlist
 
 
 class TestPlaylist:
     def test_afficher_playlist_vide(self):
         # GIVEN
-        playlist = Playlist(1, "Classiques")
+        playlist = Playlist("Classiques")
 
         # WHEN
         texte = playlist.afficher()
@@ -17,7 +17,7 @@ class TestPlaylist:
         # GIVEN
         c1 = Chanson("Imagine", "John Lennon", 1971)
         c2 = Chanson("Hey Jude", "The Beatles", 1968)
-        playlist = Playlist(1, "Classiques", [c1, c2])
+        playlist = Playlist("Classiques", [c1, c2])
 
         # WHEN
         texte = playlist.afficher()
@@ -29,7 +29,7 @@ class TestPlaylist:
     def test_get_chansons_retourne_liste(self):
         # GIVEN
         c1 = Chanson("Imagine", "John Lennon", 1971)
-        playlist = Playlist(1, "Classiques", [c1])
+        playlist = Playlist("Classiques", [c1])
 
         # WHEN
         chansons = playlist.get_chansons()
@@ -42,7 +42,7 @@ class TestPlaylist:
         # GIVEN
         c1 = Chanson("Imagine", "John Lennon", 1971)
         c2 = Chanson("Yesterday", "The Beatles", 1965)
-        playlist = Playlist(1, "Années 60")
+        playlist = Playlist("Années 60")
 
         # WHEN
         playlist.chansons.append(c1)
