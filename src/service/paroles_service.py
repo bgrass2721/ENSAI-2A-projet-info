@@ -17,7 +17,7 @@ class ParolesService:
         params = {"track_name": chanson.titre, "artist_name": chanson.artiste}
 
         try:
-            response = requests.get(url, params=params, timeout=10)
+            response = requests.get(url, params=params, timeout=20)
             response.raise_for_status()
             data = response.json()
 
