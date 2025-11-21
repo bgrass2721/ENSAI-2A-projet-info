@@ -1,46 +1,45 @@
 # ENSAI-2A-projet-info
 
-Voici les étapes à suivre pour pouvoir profiter convenablement de notre application.
-
+This are the following steps to use our application
 ## : Application à avoir
 
-Il faut utiliser le SSPCloud datalab pour que notre application fonctionne
+You should use the SSPCoud datalab to use our application
 
--  Lancer une instance de [Visual Studio Code], pour ce faire 
-  - [ ] aller sur le github de L. Deneuville 
+- Launch [Visual Studio Code], to do so : 
+  - [ ]go on the github of L. Deneuville 
   https://ludo2ne.github.io/ENSAI-2A-Projet-info/doc/tp/tools.html#custom-service
-  - [ ] cliquer sur le lien SSPCloud
+  - [ ] click on the link SSPCloud
 - [Python 3.13](https://www.python.org/)
 - [Git](https://git-scm.com/)
-- [ ] Lancer une instance de [PostgreSQL](https://www.postgresql.org/)
+- [ ] Launch [PostgreSQL](https://www.postgresql.org/)
 
 
-## : Cloner le dépôt
+## : Clone the repository
 
-- [ ] Ouvrir VSCode
-- [ ] Ouvrir un terminal bash
-- [ ] Entrer la commande suivante dans le terminal
+- [ ] Open VSCode
+- [ ] Open a new terminal
+- [ ] Write the following command in this terminal
   - `git clone https://github.com/bgrass2721/ENSAI-2A-projet-info.git`
 
 
-### Ouvrir le dossier
+### Open Folder
 
-- [ ] Fichier > Ouvrir dossier
-- [ ] Sélectionner le dossier *ENSAI-2A-PROJET-INFO*
+- [ ] File > Open Folder
+- [ ]  Select folder *ENSAI-2A-PROJET-INFO*
 
 
-## : Installer les packages requis
+## : Install required packages
 
-- [ ] Dans un terminal Bash, lancer la commande si dessous pour installer les packages
+- [ ] In Git Bash, run the following command
 
 ```bash
 pip install -r requirements.txt
 ```
 
-## : Variables d'environnement
+## : Environment variables
 
-Remplir le fichier .env avec les informations fournises dans le README de l'instance Postgresql
-que vous avez lancé
+Fill the .env file with the information provided in the README of the PostgreSQL instance you 
+launched.
 
 - [ ] Create a file called `.env`
 - [ ] Paste in and complete the elements below
@@ -54,36 +53,41 @@ POSTGRES_PASSWORD =
 ```
 
 
-## : Les tests unitaires
+## : Unit tests
 
-Vous pouvez lancer les tests unitaires à l'aide de la commande suivante
+You can run the unit tests with this command
 
-- [ ] Dans un terminal: `pytest -v` 
+- [ ] in a terminal: `pytest -v` 
 
-## : Lancer l'API
+## : Launching the API
 
-Pour lancer l'API, il faut lancer la commande ci-dessous dans un terminal
+To launch the API, run the command below in a terminal:
 
 - [ ] `python src/app.py`
 
-Vous pouvez accéder à une visualisation web de notre API en allant dans votre datalab puis en 
-cliquant sur le bouton "ouvrir" du service vscode-python puis en cliquant sur "ce lien" situé dans 
-la phrase "Vous pouvez vous connecter à votre port personnalisé (5000) en utilisant ce lien"
+You can access a web visualization of the API by going to your datalab, clicking the **“open”** 
+button of the *vscode-python* service, then clicking on **“this link”** in the sentence:  
+“You can connect to your custom port (5000) using this link.”
 
-## : Lancer le client
+## : Launching the Client
 
-Cette application fournie une interface graphique simple pour naviguer entre les différents menus.
-Pour y accéder:
-- [ ] Si c'est le premier démarrage, dans un nouveau terminal, 
-  taper la commande suivante : `python start.py`
-  - cette commande va réinitialiser la base de donnée et télécharger quelques musiques de bases
-  - Attention cette commande prend du temps (3 minutes pour les 30 chansons)
-- [ ] Dans un nouveau terminal, taper la commande suivante : `python src/main.py`
-- Vous pouvez maintenant utiliser l'application. Voici l'explication des différents menus:
-  - Ajouter une musique: permet d'ajouter une musique de votre choix en entrant le titre et 
-  l'artiste
-  - Créer une playlist: permet de créer une playlist à l'aide d'un thème et d'un nombre de musiques.
-  - Catalogue de musiques: permet de consulter les musiques présentes dans la base de donnée
-  - Catalogue de playlists: permet de consulter les playlists présentes dans la base de donnée
+This application provides a simple graphical interface to navigate between the different menus.  
+To access it:
+
+- [ ] If this is the first startup, in a new terminal, run the following command:  
+  `python start.py`  
+  - This command resets the database and downloads some basic songs.  
+  - Note: this operation takes time (about 3 minutes for 30 songs).
+
+- [ ] In a new terminal, run:  
+  `python src/main.py`
+
+You can now use the application. Here is an explanation of the different menus:
+
+- **Add a song**: allows you to add a song by entering its title and artist.  
+- **Create a playlist**: allows you to create a playlist using a theme and a number of songs.  
+- **Song catalog**: lets you view the songs available in the database.  
+- **Playlist catalog**: lets you view the playlists available in the database.
+"""
 
 
