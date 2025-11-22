@@ -17,7 +17,14 @@ You should use the SSPCloud datalab to use our application
 ## : Paste the repository
 
 - [ ] Open VSCode
+
+if you have an archive :
 - [ ] paste the archive of our repository
+
+otherwise :
+- [ ] Open a new terminal
+- [ ] Write the following command in this terminal
+  - `git clone https://github.com/bgrass2721/ENSAI-2A-projet-info.git`
 
 
 ### Open Folder
