@@ -1,12 +1,12 @@
 # ENSAI-2A-projet-info
 
 This are the following steps to use our application
-## : Application à avoir
+## : Application
 
-You should use the SSPCoud datalab to use our application
+You should use the SSPCloud datalab to use our application
 
-- Launch [Visual Studio Code], to do so : 
-  - [ ]go on the github of L. Deneuville 
+- Launch a custom version of [Visual Studio Code], to do so : 
+  - [ ] go on the github of L. Deneuville 
   https://ludo2ne.github.io/ENSAI-2A-Projet-info/doc/tp/tools.html#custom-service
   - [ ] click on the link SSPCloud
 - [Python 3.13](https://www.python.org/)
@@ -14,12 +14,10 @@ You should use the SSPCoud datalab to use our application
 - [ ] Launch [PostgreSQL](https://www.postgresql.org/)
 
 
-## : Clone the repository
+## : Paste the repository
 
 - [ ] Open VSCode
-- [ ] Open a new terminal
-- [ ] Write the following command in this terminal
-  - `git clone https://github.com/bgrass2721/ENSAI-2A-projet-info.git`
+- [ ] paste the archive of our repository
 
 
 ### Open Folder
