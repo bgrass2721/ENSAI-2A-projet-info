@@ -1,8 +1,6 @@
-import pytest
 from unittest.mock import MagicMock, patch 
-
 from dao.dao_paroles import DAO_paroles
-from business_object.paroles import Paroles
+
 
 # PATCH 1: Cible la classe mère (DAO)
 @patch("dao.dao.DBConnection") 
