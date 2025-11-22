@@ -36,7 +36,7 @@ class DAO(ABC):
                     """)
             connection.commit()
 
-    def _del_data_table(self, nom_table: str | None) -> str | None:
+    def _del_data_table(self, nom_table: str | None = None) -> str | None:
         """
         Vide la table donnée en argument en majuscule
         Si aucune table n'est spécifiée, toutes les tables de la DB sont vidées

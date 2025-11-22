@@ -32,10 +32,10 @@ class TestDAOPlaylist:
         dao = DAO_playlist()
         
         # Simuler le résultat brut du fetchall (dictionnaires)
-        a = [
-            { 'titre': 'Imagine', 'artiste': 'Lennon', 'annee': 1971, 'embed_paroles': [0.1]*10, 'str_paroles': 'Peace'},
-            { 'titre': 'Yesterday', 'artiste': 'Beatles', 'annee': 1965, 'embed_paroles': [0.2]*10, 'str_paroles': 'Long ago'},
-        ]
+        #a = [
+            #{ 'titre': 'Imagine', 'artiste': 'Lennon', 'annee': 1971, 'embed_paroles': [0.1]*10, 'str_paroles': 'Peace'},
+            #{ 'titre': 'Yesterday', 'artiste': 'Beatles', 'annee': 1965, 'embed_paroles': [0.2]*10, 'str_paroles': 'Long ago'},
+        #]
         
         # On ne mocke pas fetchall ici, on va forcer le retour de la méthode du DAO
         # NOTE: Nous devons enlever l'appel au mock pour cette méthode.

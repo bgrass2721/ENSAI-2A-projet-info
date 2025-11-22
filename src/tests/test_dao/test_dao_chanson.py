@@ -1,4 +1,3 @@
-import pytest
 from unittest.mock import MagicMock, patch 
 
 from dao.dao_chanson import DAO_chanson
